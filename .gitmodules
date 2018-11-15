@@ -1,0 +1,3 @@
+[submodule "src/castor"]
+	path = src/castor
+	url = git@github.com:dabaldassi/castor.git
