@@ -10,6 +10,10 @@ void generate(Stage * stage)
   constexpr int NB_BLOCK_H = 8;
   constexpr float SIZE_BLOCK_W = WIDTH/NB_BLOCK_W;
   constexpr float SIZE_BLOCK_H = HEIGHT/NB_BLOCK_H;
+
+  int sea_color[] = {20,50,200};
+
+  createBlock(0, 0, WIDTH, HEIGHT, sea_color, 0, 10);
   
 }
 
