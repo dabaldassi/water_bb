@@ -1,25 +1,32 @@
 #include <gameEngine/game.h>
-#include <gameEngine/actor/controlable/controlable.h>
+#include <gameEngine/actor/static.h>
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#include "worker_boat.h"
 
 void generate(Stage * stage)
 {
-  constexpr int NB_BLOCK_W = 21;
-  constexpr int NB_BLOCK_H = 8;
-  constexpr float SIZE_BLOCK_W = WIDTH/NB_BLOCK_W;
-  constexpr float SIZE_BLOCK_H = HEIGHT/NB_BLOCK_H;
+  int w,h;
+
+  getDimensionWindow(&w, &h);
+  
+  int NB_BLOCK_W = 21;
+  int NB_BLOCK_H = 8;
+  float SIZE_BLOCK_W = w/NB_BLOCK_W;
+  float SIZE_BLOCK_H = h/NB_BLOCK_H;
 
   int sea_color[] = {20,50,200};
 
-  createBlock(0, 0, WIDTH, HEIGHT, sea_color, 0, 10);
+  createBlock(0, 0, w, h, sea_color, 0, 10);
+
+  actor::WorkerBoat * boat = &stage->create<actor::WorkerBoat>(Position(0,4*SIZE_BLOCK_H + SIZE_BLOCK_H/2, actor::Boat::WIDTH, actor::Boat::HEIGHT));
+
+  boat->setGoal(b2Vec2(w/4,h/4));
   
 }
 
 int main()
 {
-  Game game(WIDTH,HEIGHT,"Water Boat Battle");
+  Game game(1920,1080,"Water Boat Battle");
   
   game.run(generate);
   
