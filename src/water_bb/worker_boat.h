@@ -5,23 +5,33 @@
 
 namespace actor {
 
+  class Island;
+  
   class WorkerBoat : public Boat
   {
-  protected:
-    bool _isWorking;
-  public:
-    static constexpr float LIFE = 100.f;
+protected:
+  bool     _isWorking;
+  float    _foodCollected;
+  Island * _island;
     
-    WorkerBoat(){}
-    WorkerBoat(const Position & p);
+public:
+  static constexpr float LIFE = 100.f;
+  
+  WorkerBoat(){}
+  WorkerBoat(const Position & p);
 
-    virtual void act(float dt);
-    virtual void effect();
-    virtual void effect(Actor * actor);
-    virtual void loadSprite();
+  virtual void act(float dt);
+  virtual void effect();
+  virtual void effect(Actor * actor);
+  virtual void loadSprite();
+  virtual void collisionOn(Actor * actor);
+  virtual void collisionOff(Actor * actor);
     
-    virtual ~WorkerBoat() = default;
-  };
+  virtual void setGoal(const b2Vec2 & vec);
+  virtual void display() const;
+    
+  virtual ~WorkerBoat() = default;
+};
 
 
 }  // actor

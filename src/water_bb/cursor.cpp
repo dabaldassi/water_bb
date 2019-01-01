@@ -33,7 +33,7 @@ void Cursor::collisionOn(Actor * a)
     c = c->next;
   }
 
-  _boatColliding = static_cast<Boat *>(a);
+  _boatColliding = dynamic_cast<Boat *>(a);
   
 }
 
@@ -73,7 +73,6 @@ void Cursor::act(float dt)
   move();
 
   if(ihm::Keyboard::keys[INTERACT] && _boatColliding) {
-    std::cout << "ok" << "\n";
     
     if(_boatColliding->isSelected())
       _boatColliding->setGoal(_body->GetPosition());

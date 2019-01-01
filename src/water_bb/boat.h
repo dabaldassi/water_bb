@@ -7,6 +7,7 @@
 #include "parameters.h"
 
 b2Vec2 operator/(const b2Vec2 & vec, float div);
+bool operator!=(const b2Vec2 & vec1, const b2Vec2 & vec2);
 
 namespace actor {
 
@@ -22,7 +23,7 @@ namespace actor {
     
     Boat(){}
     Boat(const std::string name, float life, const Position & p);
-
+    
     virtual void move(float dt = 0);
     virtual void act(float dt) = 0;
     virtual void effect() = 0;

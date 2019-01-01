@@ -5,11 +5,9 @@
 
 #include "parameters.h"
 
-#ifndef BOAT_H
-class Boat;
-#endif
-
 namespace actor {
+
+  class Boat;
 
   class Cursor : public Controlable, public Parameters<91, 135,0x0001>
   {

@@ -1,8 +1,10 @@
 #include <gameEngine/game.h>
 #include <gameEngine/actor/static.h>
+#include <gameEngine/ihm/color.h>
 
 #include "cursor.h"
 #include "worker_boat.h"
+#include "island.h"
 
 void generate(Stage * stage)
 {
@@ -19,11 +21,11 @@ void generate(Stage * stage)
 
   createBlock(0, 0, w, h, sea_color, 0, 10);
 
-  actor::WorkerBoat * boat = &stage->create<actor::WorkerBoat>(Position(0,4*SIZE_BLOCK_H + SIZE_BLOCK_H/2, actor::Boat::WIDTH, actor::Boat::HEIGHT));
-
-  //boat->setGoal(b2Vec2(w/4,h/4));
-
+  stage->create<actor::WorkerBoat>(Position(0,4*SIZE_BLOCK_H + SIZE_BLOCK_H/2, actor::Boat::WIDTH, actor::Boat::HEIGHT));
+  
   stage->create<actor::Cursor>();
+
+  stage->create<actor::Island>(Position(0,0,actor::Island::WIDTH, actor::Island::HEIGHT));
 }
 
 int main()

@@ -2,6 +2,7 @@
 #include <Box2D/Box2D.h>
 
 #include "boat.h"
+#include "island.h"
 #include "cursor.h"
 
 using actor::Boat;
@@ -18,7 +19,7 @@ Boat::Boat(const std::string name, float life, const Position & p):Moveable(name
   mass.mass = 50000;
   
   filter.categoryBits = CATEGORY;
-  filter.maskBits = Cursor::CATEGORY;
+  filter.maskBits = Cursor::CATEGORY | Island::CATEGORY;
 
   _body->SetMassData(&mass);
   _body->GetFixtureList()->SetFilterData(filter);
@@ -60,13 +61,18 @@ b2Vec2 operator/(const b2Vec2 & vec, float div)
   return b2Vec2(vec.x/div, vec.y/div);
 }
 
+bool operator!=(const b2Vec2 & vec1, const b2Vec2 & vec2) 
+{
+  return (vec1.x - vec2.x) > 0.001 || (vec1.y - vec2.y) > 0.001;
+}
+
 void Boat::select()
 {
   if(!_isMoving || _selected) {
     _selected = !_selected;
 
     if(_selected) display();
-    else clearDisplay();
+    else this->clearDisplay();
   }
 }
 
