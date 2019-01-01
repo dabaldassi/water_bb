@@ -4,18 +4,18 @@
 #include <gameEngine/actor/moveable.hpp>
 #include <gameEngine/actor/items/item.h>
 
+#include "parameters.h"
+
 b2Vec2 operator/(const b2Vec2 & vec, float div);
 
 namespace actor {
 
-  class Boat : public Moveable
+  class Boat : public Moveable, public Parameters<91,51,0x0002>
   {
   protected:
     b2Vec2   _goal;
     bool     _isMoving; 
   public:
-    static constexpr int WIDTH = 91;
-    static constexpr int HEIGHT = 51;
     
     Boat(){}
     Boat(const std::string name, float life, const Position & p);

@@ -2,6 +2,7 @@
 #include <Box2D/Box2D.h>
 
 #include "boat.h"
+#include "cursor.h"
 
 using actor::Boat;
 
@@ -15,11 +16,9 @@ Boat::Boat(const std::string name, float life, const Position & p):Moveable(name
   _body->SetAngularDamping(50.f);
  
   mass.mass = 50000;
-
-  //filter.groupIndex = -1;
-
-  filter.categoryBits = 0x0002;
-  filter.maskBits = 0x0001;
+  
+  filter.categoryBits = CATEGORY;
+  filter.maskBits = Cursor::CATEGORY;
 
   _body->SetMassData(&mass);
   _body->GetFixtureList()->SetFilterData(filter);

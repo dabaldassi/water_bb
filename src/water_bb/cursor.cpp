@@ -34,6 +34,7 @@ void Cursor::collisionOn(Actor * a)
   }
 
   _boatColliding = static_cast<Boat *>(a);
+  std::cout << "mi" << "\n";
 }
 
 void Cursor::resetFilter()
@@ -41,7 +42,7 @@ void Cursor::resetFilter()
   b2Filter filter; // Filter not to collide with anything
 
   filter.categoryBits = CATEGORY;
-  filter.maskBits = MASK;
+  filter.maskBits = Boat::CATEGORY;
 
   b2Fixture * fixture = _body->GetFixtureList();
 
@@ -58,7 +59,7 @@ void Cursor::move(float dt)
   ihm::Keyboard::keys[RIGHT] = ihm::Keyboard::keys[LEFT] = ihm::Keyboard::keys[FORWARD] = ihm::Keyboard::keys[BACK] = false;
 
   if(_boatColliding && (pos.x != _body->GetPosition().x || pos.y != _body->GetPosition().y))
-    resetFilter();
+    resetFilter(); // Reset the filter when the cursor moves and there is currently a collision with a boat
   
   _body->SetTransform(pos, _body->GetAngle());
   
@@ -67,16 +68,6 @@ void Cursor::move(float dt)
 void Cursor::act(float dt)
 {
   move();
-  
-  /*b2ContactEdge * contact = _body->GetContactList();
- 
-  while(contact) {
-    if(contact->contact->IsTouching()) std::cout << "yo" << "\n";
-    
-    contact = contact->next;
-    //std::cout << "contact" << "\n";
-    }*/
-  
 }
 
 void Cursor::loadSprite()
