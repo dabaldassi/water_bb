@@ -40,8 +40,8 @@ void Cursor::resetFilter()
 {
   b2Filter filter; // Filter not to collide with anything
 
-  filter.categoryBits = 0x0001;
-  filter.maskBits = 0x0002;
+  filter.categoryBits = CATEGORY;
+  filter.maskBits = MASK;
 
   b2Fixture * fixture = _body->GetFixtureList();
 

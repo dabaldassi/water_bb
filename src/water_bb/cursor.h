@@ -3,18 +3,17 @@
 
 #include <gameEngine/actor/controlable/controlable.h>
 
+#include "parameters.h"
+
 class Boat;
 
 namespace actor {
 
-  class Cursor : public Controlable
+  class Cursor : public Controlable, public Parameters<91, 135,0x0001,0x00002>
   {
     Boat * _boatColliding;
   public:
 
-    static constexpr float WIDTH = 91.42857142857;
-    static constexpr float HEIGHT = 135;
-    
     Cursor();
 
     virtual void loadSprite();
