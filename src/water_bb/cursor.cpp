@@ -4,6 +4,7 @@
 
 #include <Box2D/Box2D.h>
 
+#include "boat.h"
 #include "cursor.h"
 
 
@@ -11,17 +12,40 @@ using actor::Cursor;
 
 Cursor::Cursor():Controlable("cursor", 1, Position(0,0,WIDTH,HEIGHT))
 {
-  b2Filter filter;
+  _boatColliding = NULL;
+  
+  resetFilter();
 
-  filter.categoryBits = 1;
-  filter.groupIndex = 2;
-  filter.maskBits = (short)0;
+  loadSprite();
+}
+
+void Cursor::collisionOn(Actor * a)
+{
+  b2Filter f;
+  f.categoryBits = 0x0001;
+  f.maskBits = 0x0000;
+  _body->GetFixtureList()->SetFilterData(f);
+  
+  b2ContactEdge * c = _body->GetContactList();
+      
+  while(c) {
+    c->contact->SetEnabled(false);
+    c = c->next;
+  }
+
+  _boatColliding = static_cast<Boat *>(a);
+}
+
+void Cursor::resetFilter()
+{
+  b2Filter filter; // Filter not to collide with anything
+
+  filter.categoryBits = 0x0001;
+  filter.maskBits = 0x0002;
 
   b2Fixture * fixture = _body->GetFixtureList();
 
   fixture->SetFilterData(filter);
-  
-  loadSprite();
 }
 
 void Cursor::move(float dt)
@@ -32,13 +56,27 @@ void Cursor::move(float dt)
   pos.y += (HEIGHT / Viewport::METER_TO_PIXEL) * (ihm::Keyboard::keys[FORWARD] - ihm::Keyboard::keys[BACK]);
 
   ihm::Keyboard::keys[RIGHT] = ihm::Keyboard::keys[LEFT] = ihm::Keyboard::keys[FORWARD] = ihm::Keyboard::keys[BACK] = false;
+
+  if(_boatColliding && (pos.x != _body->GetPosition().x || pos.y != _body->GetPosition().y))
+    resetFilter();
   
   _body->SetTransform(pos, _body->GetAngle());
+  
 }
 
 void Cursor::act(float dt)
 {
   move();
+  
+  /*b2ContactEdge * contact = _body->GetContactList();
+ 
+  while(contact) {
+    if(contact->contact->IsTouching()) std::cout << "yo" << "\n";
+    
+    contact = contact->next;
+    //std::cout << "contact" << "\n";
+    }*/
+  
 }
 
 void Cursor::loadSprite()

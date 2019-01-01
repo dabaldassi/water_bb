@@ -1,4 +1,5 @@
 #include <cmath>
+#include <Box2D/Box2D.h>
 
 #include "boat.h"
 
@@ -7,6 +8,7 @@ using actor::Boat;
 Boat::Boat(const std::string name, float life, const Position & p):Moveable(name, life,p)
 {
   b2MassData mass;
+  b2Filter filter;
 
   _body->GetMassData(&mass);
   _body->SetLinearDamping(50.f);
@@ -14,7 +16,13 @@ Boat::Boat(const std::string name, float life, const Position & p):Moveable(name
  
   mass.mass = 50000;
 
+  //filter.groupIndex = -1;
+
+  filter.categoryBits = 0x0002;
+  filter.maskBits = 0x0001;
+
   _body->SetMassData(&mass);
+  _body->GetFixtureList()->SetFilterData(filter);
   
   _isMoving = true;
   _speed = 3.f;
