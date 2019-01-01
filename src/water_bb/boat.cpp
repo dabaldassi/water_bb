@@ -23,9 +23,10 @@ Boat::Boat(const std::string name, float life, const Position & p):Moveable(name
   _body->SetMassData(&mass);
   _body->GetFixtureList()->SetFilterData(filter);
   
-  _isMoving = true;
+  _isMoving = false;
+  _selected = false;
   _speed = 3.f;
-  
+  _food = 100.f;
 }
 
 void Boat::move(float dt)
@@ -38,8 +39,9 @@ void Boat::move(float dt)
 
   constexpr float EPSILON = 0.05;
 
-  if(deltaX < EPSILON && deltaY < EPSILON) {
-    _body->SetAngularVelocity(0.5);
+  if(abs(deltaX) < EPSILON && abs(deltaY) < EPSILON) {
+
+    _body->SetAngularVelocity(((_body->GetAngle() > 0)?-1:1)* 0.5);
 
     if(abs(_body->GetAngle()) < EPSILON) _isMoving = false;
   }
@@ -56,4 +58,19 @@ void Boat::move(float dt)
 b2Vec2 operator/(const b2Vec2 & vec, float div)
 {
   return b2Vec2(vec.x/div, vec.y/div);
+}
+
+void Boat::select()
+{
+  if(!_isMoving || _selected) {
+    _selected = !_selected;
+
+    if(_selected) display();
+    else clearDisplay();
+  }
+}
+
+void Boat::display() const
+{
+  std::cout << "Life : " << _life << "\n" << "Food : " << _food << "\n";
 }

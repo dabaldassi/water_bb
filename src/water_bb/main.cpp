@@ -21,7 +21,7 @@ void generate(Stage * stage)
 
   actor::WorkerBoat * boat = &stage->create<actor::WorkerBoat>(Position(0,4*SIZE_BLOCK_H + SIZE_BLOCK_H/2, actor::Boat::WIDTH, actor::Boat::HEIGHT));
 
-  boat->setGoal(b2Vec2(w/4,h/4));
+  //boat->setGoal(b2Vec2(w/4,h/4));
 
   stage->create<actor::Cursor>();
 }

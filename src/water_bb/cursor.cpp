@@ -34,7 +34,7 @@ void Cursor::collisionOn(Actor * a)
   }
 
   _boatColliding = static_cast<Boat *>(a);
-  std::cout << "mi" << "\n";
+  
 }
 
 void Cursor::resetFilter()
@@ -47,6 +47,9 @@ void Cursor::resetFilter()
   b2Fixture * fixture = _body->GetFixtureList();
 
   fixture->SetFilterData(filter);
+
+  if(_boatColliding && !_boatColliding->isSelected())
+    _boatColliding = NULL;
 }
 
 void Cursor::move(float dt)
@@ -68,6 +71,17 @@ void Cursor::move(float dt)
 void Cursor::act(float dt)
 {
   move();
+
+  if(ihm::Keyboard::keys[INTERACT] && _boatColliding) {
+    std::cout << "ok" << "\n";
+    
+    if(_boatColliding->isSelected())
+      _boatColliding->setGoal(_body->GetPosition());
+    
+    _boatColliding->select();
+
+    ihm::Keyboard::keys[INTERACT] = false;
+  }
 }
 
 void Cursor::loadSprite()

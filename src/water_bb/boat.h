@@ -13,8 +13,11 @@ namespace actor {
   class Boat : public Moveable, public Parameters<91,51,0x0002>
   {
   protected:
-    b2Vec2   _goal;
-    bool     _isMoving; 
+    b2Vec2 _goal;
+    bool   _isMoving;
+    bool   _selected;
+    float  _food;
+    
   public:
     
     Boat(){}
@@ -24,7 +27,12 @@ namespace actor {
     virtual void act(float dt) = 0;
     virtual void effect() = 0;
     virtual void effect(Actor * actor) = 0;
-    virtual void setGoal(const b2Vec2 & vec) { _goal = vec / Viewport::METER_TO_PIXEL; }
+    
+    virtual void setGoal(const b2Vec2 & vec) { _goal = vec, _isMoving = true; }
+    virtual void select();
+    virtual bool isSelected() const { return _selected; }
+    virtual void display() const;
+    virtual void clearDisplay() const {}
     
     virtual ~Boat() = default;
   };
