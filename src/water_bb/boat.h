@@ -18,11 +18,12 @@ namespace actor {
     bool   _isMoving;
     bool   _selected;
     float  _food;
+    bool   _team;
     
   public:
     
     Boat(){}
-    Boat(const std::string name, float life, const Position & p);
+    Boat(const std::string name, float life, const Position & p, bool team);
     
     virtual void move(float dt = 0);
     virtual void act(float dt) = 0;
@@ -34,6 +35,7 @@ namespace actor {
     virtual bool isSelected() const { return _selected; }
     virtual void display() const;
     virtual void clearDisplay() const {}
+    virtual bool team() const { return _team; }
     
     virtual ~Boat() = default;
   };

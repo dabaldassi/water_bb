@@ -1,4 +1,5 @@
 #include <gameEngine/ihm/color.h>
+#include <gameEngine/game.h>
 #include <Box2D/Box2D.h>
 #include <math.h>
 
@@ -16,7 +17,8 @@ Island::Island(const Position & p):Static("island", p)
   _body->GetFixtureList()->SetFilterData(filter);
 
   Actor::loadSprite(Color::green);
-
+  setPlanElement(_elem, Game::GAME_D, 9);
+  
   _food = 200.f;
   
 }

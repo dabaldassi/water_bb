@@ -18,7 +18,7 @@ public:
   static constexpr float LIFE = 100.f;
   
   WorkerBoat(){}
-  WorkerBoat(const Position & p);
+    WorkerBoat(const Position & p, bool team);
 
   virtual void act(float dt);
   virtual void effect();

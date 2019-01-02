@@ -1,6 +1,7 @@
 #include <gameEngine/ihm/keyboard.h>
 #include <gameEngine/ihm/color.h>
 #include <gameEngine/game.h>
+#include <math.h>
 
 #include <Box2D/Box2D.h>
 
@@ -10,9 +11,10 @@
 
 using actor::Cursor;
 
-Cursor::Cursor():Controlable("cursor", 1, Position(0,0,WIDTH,HEIGHT))
+Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*WIDTH),0,WIDTH,HEIGHT))
 {
   _boatColliding = NULL;
+  _team = team;
   
   resetFilter();
 
@@ -32,8 +34,14 @@ void Cursor::collisionOn(Actor * a)
     c->contact->SetEnabled(false);
     c = c->next;
   }
-
-  _boatColliding = dynamic_cast<Boat *>(a);
+  
+  if((!_boatColliding || !_boatColliding->isSelected())) {
+    Boat * boat = dynamic_cast<Boat *>(a);
+    
+    if(roundf(_body->GetPosition().x) == roundf(boat->body()->GetPosition().x) && boat && _team == boat->team()) {
+      _boatColliding = boat;
+    }
+  }
   
 }
 
@@ -47,7 +55,7 @@ void Cursor::resetFilter()
   b2Fixture * fixture = _body->GetFixtureList();
 
   fixture->SetFilterData(filter);
-
+  
   if(_boatColliding && !_boatColliding->isSelected())
     _boatColliding = NULL;
 }
@@ -56,36 +64,66 @@ void Cursor::move(float dt)
 {
   b2Vec2 pos = _body->GetPosition();
 
-  pos.x += (WIDTH / Viewport::METER_TO_PIXEL) * (ihm::Keyboard::keys[RIGHT] - ihm::Keyboard::keys[LEFT]);
-  pos.y += (HEIGHT / Viewport::METER_TO_PIXEL) * (ihm::Keyboard::keys[FORWARD] - ihm::Keyboard::keys[BACK]);
+  pos.x += (WIDTH / Viewport::METER_TO_PIXEL) *
+    (((_team && ihm::Keyboard::keys[RIGHT]) || (!_team && ihm::Keyboard::keys[RIGHT_2])) -
+     ((_team && ihm::Keyboard::keys[LEFT]) || (!_team && ihm::Keyboard::keys[LEFT_2])));
+  
+  pos.y += (HEIGHT / Viewport::METER_TO_PIXEL) *
+    (((_team && ihm::Keyboard::keys[FORWARD]) || (!_team && ihm::Keyboard::keys[FORWARD_2])) -
+     ((_team && ihm::Keyboard::keys[BACK]) || (!_team && ihm::Keyboard::keys[BACK_2])));
 
-  ihm::Keyboard::keys[RIGHT] = ihm::Keyboard::keys[LEFT] = ihm::Keyboard::keys[FORWARD] = ihm::Keyboard::keys[BACK] = false;
-
-  if(_boatColliding && (pos.x != _body->GetPosition().x || pos.y != _body->GetPosition().y))
+  if(!_team)
+    ihm::Keyboard::keys[RIGHT_2] = ihm::Keyboard::keys[LEFT_2] = ihm::Keyboard::keys[FORWARD_2] = ihm::Keyboard::keys[BACK_2] = false;
+  else
+    ihm::Keyboard::keys[RIGHT] = ihm::Keyboard::keys[LEFT] = ihm::Keyboard::keys[FORWARD] = ihm::Keyboard::keys[BACK] = false;
+  
+  if((pos.x != _body->GetPosition().x || pos.y != _body->GetPosition().y))
     resetFilter(); // Reset the filter when the cursor moves and there is currently a collision with a boat
   
   _body->SetTransform(pos, _body->GetAngle());
+
+
+  // if(pos.x != _body->GetPosition().x || pos.y != _body->GetPosition().y)
+  //   _body->SetLinearVelocity(b2Vec2(5,0));
   
+}
+
+void Cursor::effect()
+{
+  std::cout << _boatColliding->getName() << "\n";
+    
+  if(_boatColliding->isSelected())
+    _boatColliding->setGoal(_body->GetPosition());
+    
+  _boatColliding->select();
 }
 
 void Cursor::act(float dt)
 {
+  // b2Vec2 v = _body->GetLinearVelocity();
+  
+  // if(v.x != 0 || v.y != 0) _body->SetLinearVelocity(b2Vec2(0,0));
+  
   move();
 
-  if(ihm::Keyboard::keys[INTERACT] && _boatColliding) {
+  if(_team && ihm::Keyboard::keys[INTERACT] && _boatColliding) {
+    effect();
     
-    if(_boatColliding->isSelected())
-      _boatColliding->setGoal(_body->GetPosition());
-    
-    _boatColliding->select();
-
     ihm::Keyboard::keys[INTERACT] = false;
+  }
+
+  if(!_team && ihm::Keyboard::keys[JUMP] && _boatColliding) {
+    effect();
+    ihm::Keyboard::keys[JUMP] = false;
   }
 }
 
 void Cursor::loadSprite()
 {
-  Actor::loadSprite(Color::yellow);
-
-  setPlanElement(_elem, Game::GAME_D, 9);
+  if(_team)
+    Actor::loadSprite(Color::yellow);
+  else
+    Actor::loadSprite(Color::white);
+    
+  setPlanElement(_elem, Game::GAME_D, 1);
 }

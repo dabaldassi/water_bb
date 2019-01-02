@@ -4,7 +4,7 @@
 
 using actor::WorkerBoat;
 
-WorkerBoat::WorkerBoat(const Position & p):Boat("worker",LIFE,p)
+WorkerBoat::WorkerBoat(const Position & p, bool team):Boat("worker",LIFE,p,team)
 {
   loadSprite();
   _foodCollected = 0;

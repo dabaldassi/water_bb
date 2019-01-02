@@ -7,7 +7,7 @@
 
 using actor::Boat;
 
-Boat::Boat(const std::string name, float life, const Position & p):Moveable(name, life,p)
+Boat::Boat(const std::string name, float life, const Position & p, bool team):Moveable(name, life,p)
 {
   b2MassData mass;
   b2Filter filter;
@@ -19,7 +19,7 @@ Boat::Boat(const std::string name, float life, const Position & p):Moveable(name
   mass.mass = 50000;
   
   filter.categoryBits = CATEGORY;
-  filter.maskBits = Cursor::CATEGORY | Island::CATEGORY;
+  filter.maskBits = Cursor::CATEGORY | Island::CATEGORY;// | 0xffff;
 
   _body->SetMassData(&mass);
   _body->GetFixtureList()->SetFilterData(filter);
@@ -28,6 +28,7 @@ Boat::Boat(const std::string name, float life, const Position & p):Moveable(name
   _selected = false;
   _speed = 3.f;
   _food = 100.f;
+  _team = team;
 }
 
 void Boat::move(float dt)
