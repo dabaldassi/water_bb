@@ -19,6 +19,7 @@ namespace actor {
     virtual void effect(){}
     virtual void effect(Actor * actor){}
     virtual void loadSprite();
+    virtual void collisionOn(Actor * actor);
   
     virtual ~Warboat() = default;
   };

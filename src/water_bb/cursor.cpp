@@ -5,11 +5,12 @@
 
 #include <Box2D/Box2D.h>
 
-#include "boat.h"
+#include "worker_boat.h"
 #include "cursor.h"
 
-
 using actor::Cursor;
+
+bool Cursor::_turn = true;
 
 Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*WIDTH),0,WIDTH,HEIGHT))
 {
@@ -19,6 +20,8 @@ Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*W
   resetFilter();
 
   loadSprite();
+
+  if(_team == _turn) _turnLeft = NB_TURN;
 }
 
 void Cursor::collisionOn(Actor * a)
@@ -101,12 +104,22 @@ void Cursor::move(float dt)
   _body->SetTransform(pos, _body->GetAngle());
 }
 
+bool Cursor::checkMove()
+{
+  return (dynamic_cast<WorkerBoat *>(_boatColliding) ||
+	  (_team == _turn &&
+	   (((int)round(abs(_boatColliding->body()->GetPosition().x - _body->GetPosition().x)
+		  * Viewport::METER_TO_PIXEL / WIDTH))  |
+	   ((int)round(abs(_boatColliding->body()->GetPosition().y - _body->GetPosition().y)
+		       * Viewport::METER_TO_PIXEL / HEIGHT))) == 1));
+}
+
 void Cursor::effect()
 {
-  std::cout << _boatColliding->getName() << "\n";
-    
-  if(_boatColliding->isSelected())
+  if(_boatColliding->isSelected() && checkMove()) {
     _boatColliding->setGoal(_body->GetPosition());
+    _turnLeft--;
+  }
     
   _boatColliding->select();
 }
@@ -124,6 +137,11 @@ void Cursor::act(float dt)
   if(!_team && ihm::Keyboard::keys[JUMP] && _boatColliding) {
     effect();
     ihm::Keyboard::keys[JUMP] = false;
+  }
+
+  if(_turnLeft == 0) {
+    _turn = !_turn;
+    _turnLeft = NB_TURN;
   }
 }
 

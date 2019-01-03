@@ -1,5 +1,6 @@
 #include "warboat.h"
 #include "sprite.h"
+#include "island.h"
 
 using actor::Warboat;
 
@@ -23,3 +24,10 @@ void Warboat::loadSprite()
   }
 }
 
+void Warboat::collisionOn(actor::Actor *actor)
+{
+  if(dynamic_cast<Island *>(actor)) {
+    _body->SetLinearVelocity(b2Vec2(0,0));
+    _isMoving = false;
+  }
+}

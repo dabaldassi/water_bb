@@ -45,7 +45,6 @@ void generate(Stage * stage)
 					     actor::Boat::WIDTH,
 					     actor::Boat::HEIGHT),
 				    j==0);
-  
 }
 
 int main()

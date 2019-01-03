@@ -13,9 +13,13 @@ namespace actor {
   {
     Boat * _boatColliding;
     bool   _team;
+    int    _turnLeft;
+
+    static bool _turn;
     
   public:
     static constexpr float WIDTH = WIDTH + 0.42857;
+    static constexpr int   NB_TURN = 3;
     
     Cursor();
     Cursor(bool team);
@@ -25,8 +29,10 @@ namespace actor {
     virtual void act(float dt);
     virtual void effect();
     virtual void collisionOn(Actor * a);
-
+    
+    void nextTurn();
     void resetFilter();
+    bool checkMove();
     
     virtual ~Cursor() = default;
   };
