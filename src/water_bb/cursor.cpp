@@ -25,20 +25,38 @@ void Cursor::collisionOn(Actor * a)
 {
   b2Filter f;
   f.categoryBits = 0x0001;
-  f.maskBits = 0x0000;
+  f.maskBits = 0x0000; // Not collide when touch something
   _body->GetFixtureList()->SetFilterData(f);
   
   b2ContactEdge * c = _body->GetContactList();
       
   while(c) {
-    c->contact->SetEnabled(false);
+    c->contact->SetEnabled(false); //Disable all contact when the cursor collides
+
+    /* Sometimes cursor is FixtureA and sometimes Fixrure B ... */
+    
+    void * dataA = c->contact->GetFixtureA()->GetBody()->GetUserData();
+    void * dataB = c->contact->GetFixtureB()->GetBody()->GetUserData();
+    
+    Actor * actorA = static_cast<Actor *>(dataA);
+    Actor * actorB = static_cast<Actor *>(dataB);
+    
+    Actor * actor = (actorA == this)?actorB:actorA; // Take the actor which is not the cursor
+
+    // Get the body the nearest from the cursor
+    if(actor && abs(actor->body()->GetPosition().x - _body->GetPosition().x) < abs(a->body()->GetPosition().x - _body->GetPosition().x)) {
+      a = actor;
+    }
+    
     c = c->next;
   }
-  
+
+  // Affect the boat colliding if this actor is a baot and if there is no boat selected
   if((!_boatColliding || !_boatColliding->isSelected())) {
     Boat * boat = dynamic_cast<Boat *>(a);
-    
-    if(roundf(_body->GetPosition().x) == roundf(boat->body()->GetPosition().x) && boat && _team == boat->team()) {
+
+    //Check if the boat is in the smae case as the cursor and if this is the same team
+    if(boat && roundf(_body->GetPosition().x) == roundf(boat->body()->GetPosition().x) && _team == boat->team()) {
       _boatColliding = boat;
     }
   }
@@ -47,7 +65,7 @@ void Cursor::collisionOn(Actor * a)
 
 void Cursor::resetFilter()
 {
-  b2Filter filter; // Filter not to collide with anything
+  b2Filter filter; // Filter to collide with boat
 
   filter.categoryBits = CATEGORY;
   filter.maskBits = Boat::CATEGORY;
@@ -95,10 +113,6 @@ void Cursor::effect()
 
 void Cursor::act(float dt)
 {
-  // b2Vec2 v = _body->GetLinearVelocity();
-  
-  // if(v.x != 0 || v.y != 0) _body->SetLinearVelocity(b2Vec2(0,0));
-  
   move();
 
   if(_team && ihm::Keyboard::keys[INTERACT] && _boatColliding) {
