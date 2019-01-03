@@ -81,11 +81,6 @@ void Cursor::move(float dt)
     resetFilter(); // Reset the filter when the cursor moves and there is currently a collision with a boat
   
   _body->SetTransform(pos, _body->GetAngle());
-
-
-  // if(pos.x != _body->GetPosition().x || pos.y != _body->GetPosition().y)
-  //   _body->SetLinearVelocity(b2Vec2(5,0));
-  
 }
 
 void Cursor::effect()
@@ -120,10 +115,13 @@ void Cursor::act(float dt)
 
 void Cursor::loadSprite()
 {
+  int color1[] = {255,255,0,80};
+  int color2[] = {255,255,255,80};
+  
   if(_team)
-    Actor::loadSprite(Color::yellow);
+    setColorElement(_elem, color1);
   else
-    Actor::loadSprite(Color::white);
+    setColorElement(_elem, color2);
     
   setPlanElement(_elem, Game::GAME_D, 1);
 }

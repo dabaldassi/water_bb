@@ -7,11 +7,13 @@
 
 namespace actor {
 
-  class Island : public Static, public Parameters<91,135,0x0004>
+  class Island : public Static, public Parameters<91,102,0x0004>
   {
     float _food;
   
   public:
+    static constexpr float FOOD = 200.f;
+    
     Island(){}
     Island(const Position & p);
 

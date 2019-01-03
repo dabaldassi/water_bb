@@ -18,10 +18,14 @@ void generate(Stage * stage)
   float SIZE_BLOCK_W = w/(float)NB_BLOCK_W;
   float SIZE_BLOCK_H = h/(float)NB_BLOCK_H;
 
-  int sea_color[] = {38,120,155};
+  int sea_color[] = {38,120,155,255};
 
-  createBlock(0, 0, w, h, sea_color, 0, 1);
+  SDL_SetRenderTarget(_windows_SANDAL2->current->renderer, NULL);
+  SDL_SetRenderDrawBlendMode(_windows_SANDAL2->current->renderer, SDL_BLENDMODE_BLEND);
+  SDL_SetRenderDrawColor(_windows_SANDAL2->current->renderer, 128, 128, 128, 255);
 
+  createBlock(0, 0, w, h, sea_color, 0, 5);
+  
   stage->create<actor::WorkerBoat>(Position(0,
 					    4*SIZE_BLOCK_H + SIZE_BLOCK_H/2,
 					    actor::Boat::WIDTH,
@@ -41,7 +45,6 @@ void generate(Stage * stage)
 					     actor::Boat::WIDTH,
 					     actor::Boat::HEIGHT),
 				    j==0);
-  
   
 }
 
