@@ -19,6 +19,7 @@ namespace actor {
     b2Vec2 _goal;
     bool   _isMoving;
     bool   _selected;
+    bool   _isDying;
     float  _food;
     bool   _team;
     int    _timeFood;

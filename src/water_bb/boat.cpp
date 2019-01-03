@@ -57,7 +57,6 @@ void Boat::move(float dt)
   
     _body->SetLinearVelocity(velocity);
     _body->SetTransform(pos, angle);
-    
   }
 }
 

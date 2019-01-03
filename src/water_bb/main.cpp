@@ -26,8 +26,8 @@ void generate(Stage * stage)
 
   createBlock(0, 0, w, h, sea_color, 0, 5);
   
-  stage->create<actor::WorkerBoat>(Position(0,
-					    4*SIZE_BLOCK_H + SIZE_BLOCK_H/2,
+  stage->create<actor::WorkerBoat>(Position(SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
+					    4*SIZE_BLOCK_H + (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
 					    actor::WorkerBoat::WIDTH,
 					    actor::WorkerBoat::HEIGHT),
 				   true
@@ -40,11 +40,11 @@ void generate(Stage * stage)
   
   for(int j = 0; j < 2; j++)
     for(int i = 0; i < NB_BLOCK_H ; i++)
-      stage->create<actor::Warboat>(Position(SIZE_BLOCK_W + j * (NB_BLOCK_W - 3) * SIZE_BLOCK_W,
-					     i*SIZE_BLOCK_H + SIZE_BLOCK_H/2,
-					     actor::Boat::WIDTH,
-					     actor::Boat::HEIGHT),
-				    j==0);
+      stage->create<actor::Warboat>(Position(SIZE_BLOCK_W + j * (NB_BLOCK_W - 3) * SIZE_BLOCK_W + (SIZE_BLOCK_W / 2.f - actor::Boat::WIDTH / 2.f),
+  					     i*SIZE_BLOCK_H + (SIZE_BLOCK_H/2.f - actor::Boat::HEIGHT/2.f),
+  					     actor::Boat::WIDTH,
+  					     actor::Boat::HEIGHT),
+  				    j==0);
 }
 
 int main()

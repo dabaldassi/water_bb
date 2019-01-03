@@ -46,7 +46,9 @@ void WorkerBoat::collisionOn(Actor * actor)
     _island = island;
   }
   else if((boat = dynamic_cast<Warboat *>(actor))) {
-    boat->refuel(&_foodCollected);
+
+    if(_team == boat->team())
+      boat->refuel(&_foodCollected);
     
     b2ContactEdge * edge = _body->GetContactList();
     
