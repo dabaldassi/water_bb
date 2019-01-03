@@ -14,11 +14,14 @@ namespace actor {
     float    _foodCollected;
     Island * _island;
     float    _capacity;
+    b2Vec2   _lastPos;
 
     ihm::ProgressBar * _foodCollectedBar;
     
   public:
     static constexpr float LIFE = 100.f;
+    static constexpr float WIDTH = 53.f;
+    static constexpr float HEIGHT = 22.f;
   
     WorkerBoat(){}
     WorkerBoat(const Position & p, bool team);

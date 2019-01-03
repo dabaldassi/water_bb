@@ -28,8 +28,8 @@ void generate(Stage * stage)
   
   stage->create<actor::WorkerBoat>(Position(0,
 					    4*SIZE_BLOCK_H + SIZE_BLOCK_H/2,
-					    actor::Boat::WIDTH,
-					    actor::Boat::HEIGHT),
+					    actor::WorkerBoat::WIDTH,
+					    actor::WorkerBoat::HEIGHT),
 				   true
 				   );
   

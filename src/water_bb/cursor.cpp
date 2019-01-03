@@ -118,7 +118,9 @@ void Cursor::effect()
 {
   if(_boatColliding->isSelected() && checkMove()) {
     _boatColliding->setGoal(_body->GetPosition());
-    _turnLeft--;
+
+    if(!dynamic_cast<WorkerBoat *>(_boatColliding))
+      _turnLeft--;
   }
     
   _boatColliding->select();
