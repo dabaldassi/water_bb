@@ -29,6 +29,10 @@ Boat::Boat(const std::string name, float life, const Position & p, bool team):Mo
   _speed = 3.f;
   _food = 100.f;
   _team = team;
+  _timeFood = 10000;
+  _timerFood = 0.f;
+  _lifeBar = NULL;
+  _foodBar = NULL;
 }
 
 void Boat::move(float dt)
@@ -62,6 +66,11 @@ b2Vec2 operator/(const b2Vec2 & vec, float div)
   return b2Vec2(vec.x/div, vec.y/div);
 }
 
+b2Vec2 operator*(const b2Vec2 & vec, float coeff)
+{
+  return b2Vec2(vec.x*coeff, vec.y*coeff);
+}
+
 bool operator!=(const b2Vec2 & vec1, const b2Vec2 & vec2) 
 {
   return (vec1.x - vec2.x) > 0.001 || (vec1.y - vec2.y) > 0.001;
@@ -73,11 +82,49 @@ void Boat::select()
     _selected = !_selected;
 
     if(_selected) display();
-    else this->clearDisplay();
+    else clearDisplay();
   }
 }
 
-void Boat::display() const
+void Boat::display()
 {
-  std::cout << "Life : " << _life << "\n" << "Food : " << _food << "\n";
+  const b2Vec2 & p = _body->GetPosition();
+  int green[4] = {10,150,10,180};
+  int blue[4] = {10,10,150,255};
+  
+  
+  _lifeBar = new ihm::ProgressBar(Position(p.x * Viewport::METER_TO_PIXEL, p.y * Viewport::METER_TO_PIXEL + WIDTH/3, WIDTH - 10, 4),green,_life/100.f);
+
+  _foodBar = new ihm::ProgressBar(Position(p.x * Viewport::METER_TO_PIXEL, p.y * Viewport::METER_TO_PIXEL - WIDTH/3, WIDTH - 10, 4),blue,_life/100.f);
+  
+}
+
+void Boat::clearDisplay()
+{
+  delete _lifeBar;
+  delete _foodBar;
+
+  _lifeBar = NULL;
+  _foodBar = NULL;
+}
+
+void Boat::act(float dt)
+{
+  if(_timerFood >= _timeFood) {
+    _timerFood = 0;
+    _food -= 5;
+  }
+
+  if(_lifeBar) *_lifeBar = _life/100.f;
+  if(_foodBar) *_foodBar = _food/100.f;
+
+  _timerFood += dt;
+
+  if(_life == 0 || _food == 0) kill();
+}
+
+Boat::~Boat()
+{
+  if(_lifeBar) delete _lifeBar;
+  if(_foodBar) delete _foodBar;
 }

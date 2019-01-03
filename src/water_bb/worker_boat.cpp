@@ -8,15 +8,21 @@ WorkerBoat::WorkerBoat(const Position & p, bool team):Boat("worker",LIFE,p,team)
 {
   loadSprite();
   _foodCollected = 0;
+  _foodCollectedBar = NULL;
+  _capacity = 400.f;
 }
 
 void WorkerBoat::act(float dt)
 {
+  Boat::act(dt);
+  
   if(_isMoving) {
     move();
   }
     
-  if(_isWorking) _foodCollected += _island->take();
+  if(_isWorking && _foodCollected < _capacity) _foodCollected += _island->take();
+
+  if(_foodCollectedBar) *_foodCollectedBar = _foodCollected / _capacity;
 }
 
 void WorkerBoat::collisionOn(Actor * actor)
@@ -27,15 +33,11 @@ void WorkerBoat::collisionOn(Actor * actor)
     _isWorking = true;
     _isMoving = false;
     _island = island;
-    //_body->SetLinearVelocity(b2Vec2(0,0));
-    //_body->SetAngularVelocity(0);
-    //std::cout << "une ile !" << "\n";
   }
 }
 
 void WorkerBoat::collisionOff(Actor * actor)
 {
-  //std::cout << actor->getName() <<" OFF" << "\n";
 }
 
 void WorkerBoat::effect()
@@ -55,10 +57,7 @@ void WorkerBoat::loadSprite()
 
 void WorkerBoat::setGoal(const b2Vec2 &vec)
 {
-  std::cout << "what ?" << "\n";
   if(_isWorking) {
-    
-    
     if(vec != _island->body()->GetPosition()) {
       _isWorking = false;
       _island = NULL;
@@ -67,12 +66,28 @@ void WorkerBoat::setGoal(const b2Vec2 &vec)
   }
   else
     Boat::setGoal(vec);
-  
 }
 
-void WorkerBoat::display() const
+void WorkerBoat::display()
 {
+  int brown[] = {65,45,35,255};
+  const b2Vec2 & p = _body->GetPosition() * Viewport::METER_TO_PIXEL;
+  
   Boat::display();
   
-  std::cout << "Food collected : " << _foodCollected << "\n";
+  _foodCollectedBar = new ihm::ProgressBar(Position(p.x, p.y - WIDTH / 3 - 10, WIDTH - 10, 4), brown, _foodCollected / _capacity);
+}
+
+void WorkerBoat::clearDisplay()
+{
+  Boat::clearDisplay();
+
+  delete _foodCollectedBar;
+
+  _foodCollectedBar = NULL;
+}
+
+WorkerBoat::~WorkerBoat()
+{
+  if(_foodCollectedBar) delete _foodCollectedBar;
 }

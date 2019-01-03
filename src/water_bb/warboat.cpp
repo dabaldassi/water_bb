@@ -11,6 +11,8 @@ Warboat::Warboat(const Position & p, bool team):Boat("warboat", LIFE, p, team)
 
 void Warboat::act(float dt)
 {
+  Boat::act(dt);
+  
   if(_isMoving) move();
 }
 

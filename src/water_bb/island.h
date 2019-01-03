@@ -12,7 +12,7 @@ namespace actor {
     float _food;
   
   public:
-    static constexpr float FOOD = 200.f;
+    static constexpr float FOOD = 800.f;
     
     Island(){}
     Island(const Position & p);
