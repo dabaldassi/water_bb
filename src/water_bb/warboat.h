@@ -8,6 +8,7 @@ namespace actor {
   class Warboat : public Boat
   {
   protected:
+    Item * _flag;
     
   public:
     static constexpr float LIFE = 100.f;
@@ -20,7 +21,9 @@ namespace actor {
     virtual void effect(Actor * actor){}
     virtual void loadSprite();
     virtual void collisionOn(Actor * actor);
-  
+
+    virtual void pickFlag(Item * item)  { _flag = item; };
+    
     virtual ~Warboat() = default;
   };
 

@@ -19,7 +19,7 @@ namespace actor {
     
   public:
     static constexpr float WIDTH = WIDTH + 0.42857;
-    static constexpr int   NB_TURN = 3;
+    static constexpr int   NB_TURN = 30;
     
     Cursor();
     Cursor(bool team);

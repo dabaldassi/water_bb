@@ -10,7 +10,7 @@
 
 using actor::Cursor;
 
-bool Cursor::_turn = true;
+bool Cursor::_turn = false;
 
 Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*WIDTH),0,WIDTH,HEIGHT))
 {
@@ -128,6 +128,9 @@ void Cursor::effect()
 
 void Cursor::act(float dt)
 {
+  if(_boatColliding && _boatColliding->getLife() <= 0)
+    _boatColliding = NULL;
+  
   move();
 
   if(_team && ihm::Keyboard::keys[INTERACT] && _boatColliding) {

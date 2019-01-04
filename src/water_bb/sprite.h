@@ -7,5 +7,6 @@
 #define ISLAND_1 "../assets/sprites/ile_vierge.png"
 #define ISLAND_2 "../assets/sprites/ile_enexploitation.png"
 #define ISLAND_3 "../assets/sprites/ile_vide.png"
+#define RABBIT "../assets/sprites/lapin.png"
 
 #endif /* SPRITE_H */

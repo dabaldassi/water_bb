@@ -1,11 +1,32 @@
 #include <gameEngine/game.h>
 #include <gameEngine/actor/static.h>
 #include <gameEngine/ihm/color.h>
+#include <gameEngine/actor/items/item.h>
 
 #include "cursor.h"
 #include "worker_boat.h"
 #include "island.h"
 #include "warboat.h"
+#include "sprite.h"
+
+void collisionRabbit(actor::Actor * actor, actor::Actor * b)
+{
+  actor::Item    * rabbit = static_cast<actor::Item *>(actor);
+  actor::Warboat * boat = dynamic_cast<actor::Warboat *>(b);
+
+  if(rabbit->isOnTheGround() && boat) {
+    boat->pickFlag(rabbit->pick());
+  }
+}
+
+void effectRabbit(actor::Actor * actor)
+{
+  actor::Item * rabbit = static_cast<actor::Item *>(actor);
+
+  rabbit->stage()->endStage();
+
+  std::cout << "win" << "\n";
+}
 
 void generate(Stage * stage)
 {
@@ -25,9 +46,22 @@ void generate(Stage * stage)
   SDL_SetRenderDrawColor(_windows_SANDAL2->current->renderer, 128, 128, 128, 255);
 
   createBlock(0, 0, w, h, sea_color, 0, 5);
+
+  actor::Item * rabbit = &stage->create<actor::Item>("rabbit",
+						    Position(SIZE_BLOCK_W * (NB_BLOCK_W>>1) +
+							     (SIZE_BLOCK_W - 85) / 2.f,
+							     SIZE_BLOCK_H * (NB_BLOCK_H>>1) +
+							     (SIZE_BLOCK_H - 85) / 2.f,
+							     85,
+							     85),
+						     12.f);
+  rabbit->loadSprite(RABBIT);
+  rabbit->addCollisionOnStatement(collisionRabbit);
+  rabbit->addEffectStatement(effectRabbit);
   
   stage->create<actor::WorkerBoat>(Position(SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
-					    4*SIZE_BLOCK_H + (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
+					    4*SIZE_BLOCK_H +
+					    (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
 					    actor::WorkerBoat::WIDTH,
 					    actor::WorkerBoat::HEIGHT),
 				   true
@@ -40,8 +74,10 @@ void generate(Stage * stage)
   
   for(int j = 0; j < 2; j++)
     for(int i = 0; i < NB_BLOCK_H ; i++)
-      stage->create<actor::Warboat>(Position(SIZE_BLOCK_W + j * (NB_BLOCK_W - 3) * SIZE_BLOCK_W + (SIZE_BLOCK_W / 2.f - actor::Boat::WIDTH / 2.f),
-  					     i*SIZE_BLOCK_H + (SIZE_BLOCK_H/2.f - actor::Boat::HEIGHT/2.f),
+      stage->create<actor::Warboat>(Position(SIZE_BLOCK_W + j * (NB_BLOCK_W - 3) * SIZE_BLOCK_W +
+					     (SIZE_BLOCK_W / 2.f - actor::Boat::WIDTH / 2.f),
+  					     i*SIZE_BLOCK_H +
+					     (SIZE_BLOCK_H/2.f - actor::Boat::HEIGHT/2.f),
   					     actor::Boat::WIDTH,
   					     actor::Boat::HEIGHT),
   				    j==0);
