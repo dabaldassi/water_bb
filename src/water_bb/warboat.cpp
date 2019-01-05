@@ -1,3 +1,5 @@
+#include <random>
+
 #include "warboat.h"
 #include "sprite.h"
 #include "island.h"
@@ -20,13 +22,6 @@ void Warboat::act(float dt)
     if(++_currentSprite == NB_SPRITES) kill();
   }
   
-  if(_life <= 0 && _currentSprite < 2) {
-    setSpriteAnimationElement(_elem, 2);
-    _currentSprite = 2;
-    _life = 100;
-    _food = 100;
-  }
-
   if(_flag && _life <= 0) {
     _flag->drop(_body->GetPosition());
     _flag = NULL;
@@ -39,6 +34,13 @@ void Warboat::act(float dt)
 
   if(_flag && ((_team && _body->GetPosition().x * Viewport::METER_TO_PIXEL < WIDTH) || (!_team && _body->GetPosition().x * Viewport::METER_TO_PIXEL > w - WIDTH - 10))) {
     _flag->effect();
+  }
+
+  if(_life <= 0 && _currentSprite < 2) {
+    setSpriteAnimationElement(_elem, 2);
+    _currentSprite = 2;
+    _life = 100;
+    _food = 100;
   }
 }
 
@@ -65,4 +67,38 @@ void Warboat::collisionOn(actor::Actor *actor)
     _body->SetLinearVelocity(b2Vec2(0,0));
     _isMoving = false;
   }
+}
+
+void Warboat::wind()
+{
+  b2MassData mass;
+  _body->GetMassData(&mass);
+    
+  _body->SetLinearVelocity(b2Vec2(WIDTH * 4, HEIGHT * 4));
+  _body->ApplyLinearImpulse(b2Vec2(50, 50), mass.center, true);
+}
+
+void Warboat::thunder()
+{
+  kill();
+}
+
+// Kill by thunder
+// Move by wind
+// Nothing
+// TP
+
+void Warboat::effect()
+{
+  std::random_device rd{};
+  std::mt19937       gen{rd()};
+  std::normal_distribution<> d{0,4};
+  void (Warboat::*effects[])() = {&Warboat::wind, &Warboat::kill};
+
+  int n = d(gen);
+
+  if(n >= 0  && static_cast<unsigned int>(n) < sizeof(effects)/sizeof(void (Warboat::*)())) {
+    (this->*effects[n])();
+  }
+  
 }

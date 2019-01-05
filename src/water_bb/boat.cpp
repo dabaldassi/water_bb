@@ -49,7 +49,10 @@ void Boat::move(float dt)
 
     _body->SetAngularVelocity(((_body->GetAngle() > 0)?-1:1)* 0.5);
 
-    if(abs(_body->GetAngle()) < EPSILON) _isMoving = false;
+    if(abs(_body->GetAngle()) < EPSILON) {
+      _isMoving = false;
+      effect();
+    }
   }
   else {
     velocity.x += ((deltaX < 0)?-1:1) * _speed * (1 - abs(angle) / (M_PI / 2));

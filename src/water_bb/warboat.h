@@ -19,13 +19,16 @@ namespace actor {
     Warboat(const Position & p, bool team);
   
     virtual void act(float dt);
-    virtual void effect(){}
+    virtual void effect();
     virtual void effect(Actor * actor){}
     virtual void loadSprite();
     virtual void collisionOn(Actor * actor);
 
     virtual void pickFlag(Item * item)  { _flag = item; };
     virtual bool deadboat() const { return _currentSprite >= 2; }
+
+    void wind();
+    void thunder();
     
     virtual ~Warboat() = default;
   };

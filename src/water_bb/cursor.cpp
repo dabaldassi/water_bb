@@ -36,7 +36,7 @@ void Cursor::collisionOn(Actor * a)
   while(c) {
     c->contact->SetEnabled(false); //Disable all contact when the cursor collides
 
-    /* Sometimes cursor is FixtureA and sometimes Fixrure B ... */
+    /* Sometimes cursor is FixtureA and sometimes Fixture B ... */
     
     void * dataA = c->contact->GetFixtureA()->GetBody()->GetUserData();
     void * dataB = c->contact->GetFixtureB()->GetBody()->GetUserData();
@@ -58,10 +58,10 @@ void Cursor::collisionOn(Actor * a)
   if((!_boatColliding || !_boatColliding->isSelected())) {
     Boat * boat = dynamic_cast<Boat *>(a);
 
-    //Check if the boat is in the smae case as the cursor and if this is the same team
-    if(boat && roundf(_body->GetPosition().x) == roundf(boat->body()->GetPosition().x) && _team == boat->team()) {
+    //Check if the boat is in the same case as the cursor and if this is the same team
+    // if(boat && roundf(_body->GetPosition().x) == roundf(boat->body()->GetPosition().x) && _team == boat->team())
       _boatColliding = boat;
-    }
+      
   }
   
 }
