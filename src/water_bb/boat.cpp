@@ -109,6 +109,7 @@ void Boat::clearDisplay()
 
 void Boat::act(float dt)
 {
+  
   if(_timerFood >= _timeFood) {
     _timerFood = 0;
     _food -= 5;
@@ -120,6 +121,7 @@ void Boat::act(float dt)
   _timerFood += dt;
 
   if(_life <= 0 || _food <= 0) kill();
+  
 }
 
 void Boat::refuel(float *food)

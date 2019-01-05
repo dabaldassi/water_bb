@@ -13,6 +13,8 @@ WorkerBoat::WorkerBoat(const Position & p, bool team):Boat("worker",LIFE,p,team)
   _foodCollected = 0;
   _foodCollectedBar = NULL;
   _capacity = 400.f;
+  _isWorking = false;
+  _island = NULL;
 }
 
 void WorkerBoat::act(float dt)

@@ -36,6 +36,7 @@ namespace actor {
     virtual void setGoal(const b2Vec2 & vec);
     virtual void display();
     virtual void clearDisplay();
+    virtual bool deadboat() const { return _life <= 0; }
     
     virtual ~WorkerBoat();
   };

@@ -128,7 +128,7 @@ void Cursor::effect()
 
 void Cursor::act(float dt)
 {
-  if(_boatColliding && _boatColliding->getLife() <= 0)
+  if(_boatColliding && _boatColliding->deadboat())
     _boatColliding = NULL;
   
   move();

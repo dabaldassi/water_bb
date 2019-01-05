@@ -34,7 +34,7 @@ float Island::take()
 {
   float food = 0.f;
   
-  if(_food > 0) {
+  if(_food > 0.f) {
     food = (0.5 > _food)?_food:0.5;
     _food -= food;
   }

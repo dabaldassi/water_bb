@@ -45,6 +45,7 @@ namespace actor {
     virtual void clearDisplay();
     virtual bool team() const { return _team; }
     virtual void refuel(float * food);
+    virtual bool deadboat() const = 0;
     
     virtual ~Boat();
   };

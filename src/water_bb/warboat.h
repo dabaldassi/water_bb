@@ -9,9 +9,11 @@ namespace actor {
   {
   protected:
     Item * _flag;
+    int    _currentSprite;
     
   public:
     static constexpr float LIFE = 100.f;
+    static constexpr int   NB_SPRITES = 10;
     
     Warboat(){}
     Warboat(const Position & p, bool team);
@@ -23,13 +25,11 @@ namespace actor {
     virtual void collisionOn(Actor * actor);
 
     virtual void pickFlag(Item * item)  { _flag = item; };
+    virtual bool deadboat() const { return _currentSprite >= 2; }
     
     virtual ~Warboat() = default;
   };
 
 }  // actor
-
-
-
 
 #endif /* WARBOAT_H */
