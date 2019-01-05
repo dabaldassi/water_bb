@@ -11,8 +11,9 @@
 using actor::Cursor;
 
 bool Cursor::_turn = false;
+int Cursor::_toChange = 0;
 
-Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*WIDTH),0,WIDTH,HEIGHT))
+Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*WIDTH),4*HEIGHT,WIDTH,HEIGHT))
 {
   _boatColliding = NULL;
   _team = team;
@@ -22,6 +23,9 @@ Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*W
   loadSprite();
 
   if(_team == _turn) _turnLeft = NB_TURN;
+  else _turnLeft = NB_TURN;
+
+  
 }
 
 void Cursor::collisionOn(Actor * a)
@@ -60,6 +64,8 @@ void Cursor::collisionOn(Actor * a)
 
     //Check if the boat is in the same case as the cursor and if this is the same team
     // if(boat && roundf(_body->GetPosition().x) == roundf(boat->body()->GetPosition().x) && _team == boat->team())
+
+    if(boat && _team == boat->team())
       _boatColliding = boat;
       
   }
@@ -144,21 +150,26 @@ void Cursor::act(float dt)
     ihm::Keyboard::keys[JUMP] = false;
   }
 
-  if(_turnLeft == 0) {
+  if(_turnLeft == 0 && _turn == _team) {
     _turn = !_turn;
     _turnLeft = NB_TURN;
+    _toChange = 0;
+  }
+
+  if(_toChange < 2) {
+    _toChange++;
+
+    if(_team == _turn) setColorElement(_elem, (_turn)?YELLOW:PURPLE);
+    else setColorElement(_elem, WHITE);
   }
 }
 
 void Cursor::loadSprite()
-{
-  int color1[] = {255,255,0,80};
-  int color2[] = {255,255,255,80};
-  
-  if(_team)
-    setColorElement(_elem, color1);
+{  
+  if(_team == _turn)
+    setColorElement(_elem, YELLOW);
   else
-    setColorElement(_elem, color2);
+    setColorElement(_elem, WHITE);
     
   setPlanElement(_elem, Game::GAME_D, 1);
 }

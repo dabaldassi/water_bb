@@ -1,3 +1,4 @@
+#include <Box2D/Box2D.h>
 #include <random>
 
 #include "warboat.h"
@@ -93,12 +94,11 @@ void Warboat::effect()
   std::random_device rd{};
   std::mt19937       gen{rd()};
   std::normal_distribution<> d{0,4};
-  void (Warboat::*effects[])() = {&Warboat::wind, &Warboat::kill};
+  void (Warboat::*effects[])() = {&Warboat::wind, &Warboat::thunder};
 
   int n = d(gen);
 
   if(n >= 0  && static_cast<unsigned int>(n) < sizeof(effects)/sizeof(void (Warboat::*)())) {
     (this->*effects[n])();
   }
-  
 }

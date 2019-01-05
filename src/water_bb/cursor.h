@@ -16,6 +16,11 @@ namespace actor {
     int    _turnLeft;
 
     static bool _turn;
+    static int  _toChange;
+
+    int YELLOW[4] = {255,255,0,80};
+    int PURPLE[4] = {255,0,255,80};
+    int WHITE[4] = {255,255,255,80};
     
   public:
     static constexpr float WIDTH = WIDTH + 0.42857;

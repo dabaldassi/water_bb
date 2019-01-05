@@ -70,7 +70,7 @@ void generate(Stage * stage)
   stage->create<actor::Cursor>(true);
   stage->create<actor::Cursor>(false);
 
-  stage->create<actor::Island>(Position(0,0,actor::Island::WIDTH, actor::Island::HEIGHT));
+  stage->create<actor::Island>(Position(4*SIZE_BLOCK_W,0,actor::Island::WIDTH, actor::Island::HEIGHT));
   
   for(int j = 0; j < 2; j++)
     for(int i = 0; i < NB_BLOCK_H ; i++)
