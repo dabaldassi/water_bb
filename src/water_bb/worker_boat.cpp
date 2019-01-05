@@ -27,8 +27,9 @@ void WorkerBoat::act(float dt)
     
   if(_isWorking) _foodCollected += _island->take();
 
-  if(_isWorking && _foodCollected >= _capacity) {
+  if(_isWorking && (_foodCollected >= _capacity || _island->empty())) {
     _isWorking = false;
+    setDisplayCodeElement(_elem, 0, 1);
     setGoal(_lastPos);
   }
 
@@ -46,6 +47,7 @@ void WorkerBoat::collisionOn(Actor * actor)
     _isWorking = true;
     _isMoving = false;
     _island = island;
+    setDisplayCodeElement(_elem, 0, 0);
   }
   else if((boat = dynamic_cast<Warboat *>(actor))) {
 

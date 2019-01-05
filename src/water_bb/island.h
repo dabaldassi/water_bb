@@ -7,12 +7,12 @@
 
 namespace actor {
 
-  class Island : public Static, public Parameters<91,102,0x0004>
+  class Island : public Static, public Parameters<275,135,0x0004>
   {
     float _food;
   
   public:
-    static constexpr float FOOD = 800.f;
+    static constexpr float FOOD = 1600.f;
     
     Island(){}
     Island(const Position & p);
@@ -20,6 +20,7 @@ namespace actor {
     virtual void act(float dt);
 
     float take();
+    bool empty() const { return _food <= 0; }
  
     virtual ~Island() = default;
   };
