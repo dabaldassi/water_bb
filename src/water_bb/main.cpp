@@ -8,6 +8,7 @@
 #include "island.h"
 #include "warboat.h"
 #include "sprite.h"
+#include "sounds.h"
 
 void collisionRabbit(actor::Actor * actor, actor::Actor * b)
 {
@@ -16,6 +17,7 @@ void collisionRabbit(actor::Actor * actor, actor::Actor * b)
 
   if(rabbit->isOnTheGround() && boat) {
     boat->pickFlag(rabbit->pick());
+    rabbit->playSound(0);
   }
 }
 
@@ -58,6 +60,7 @@ void generate(Stage * stage)
   rabbit->loadSprite(RABBIT);
   rabbit->addCollisionOnStatement(collisionRabbit);
   rabbit->addEffectStatement(effectRabbit);
+  rabbit->addSound(RABBIT_ALERT);
   
   stage->create<actor::WorkerBoat>(Position(SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
 					    4*SIZE_BLOCK_H +
@@ -84,6 +87,9 @@ void generate(Stage * stage)
   					     actor::Boat::WIDTH,
   					     actor::Boat::HEIGHT),
   				    j==0);
+  
+  stage->addMusic(MUSIC_MAIN_PHASE);
+  stage->playMusic(0);
 }
 
 int main()

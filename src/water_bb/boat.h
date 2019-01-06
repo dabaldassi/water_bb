@@ -38,7 +38,7 @@ namespace actor {
     virtual void effect() = 0;
     virtual void effect(Actor * actor) = 0;
     
-    virtual void setGoal(const b2Vec2 & vec) { _goal = vec, _isMoving = true; }
+    virtual void setGoal(const b2Vec2 & vec);
     virtual void select();
     virtual bool isSelected() const { return _selected; }
     virtual void display();
@@ -46,6 +46,7 @@ namespace actor {
     virtual bool team() const { return _team; }
     virtual void refuel(float * food);
     virtual bool deadboat() const = 0;
+    virtual void go_sound();
     
     virtual ~Boat();
   };

@@ -2,3 +2,5 @@ build/*
 exec
 *~*
 *#*
+assets/sounds/*
+assets/musics/*

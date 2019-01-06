@@ -1,9 +1,11 @@
 #include <cmath>
 #include <Box2D/Box2D.h>
+#include <random>
 
 #include "boat.h"
 #include "island.h"
 #include "cursor.h"
+#include "sounds.h"
 
 using actor::Boat;
 
@@ -33,6 +35,19 @@ Boat::Boat(const std::string name, float life, const Position & p, bool team):Mo
   _timerFood = 0.f;
   _lifeBar = NULL;
   _foodBar = NULL;
+  
+  addSound(SELECTION1);
+  addSound(SELECTION2);
+  addSound(SELECTION3);
+  addSound(SELECTION4);
+  addSound(SELECTION5);
+  addSound(DEPART1);
+  addSound(DEPART2);
+  addSound(DEPART3);
+  addSound(DEPART4);
+  addSound(DEPART5);
+  addSound(DEPART6);
+  addSound(DEADBOAT);
 }
 
 void Boat::move(float dt)
@@ -83,7 +98,23 @@ void Boat::select()
   if(!_isMoving || _selected) {
     _selected = !_selected;
 
-    if(_selected) display();
+    if(_selected) {
+      std::random_device rd;
+      std::mt19937 gen(rd());
+      std::uniform_int_distribution<> d(0,100);
+
+      int id = d(gen);
+     
+      if(id >= 90 && id <= 97) id = 1;
+      else if(id > 97) id = 4;
+      else if(id >= 0 && id < 30) id = 0;
+      else if(id >= 30 && id < 60) id = 2;
+      else id = 3;
+
+      playSound(id);
+      
+      display();
+    }
     else clearDisplay();
   }
 }
@@ -123,7 +154,10 @@ void Boat::act(float dt)
 
   _timerFood += dt;
 
-  if(_life <= 0 || _food <= 0) kill();
+  if(_life <= 0 || _food <= 0) {
+    kill();
+    playSound(11);
+  }
   
 }
 
@@ -141,4 +175,28 @@ Boat::~Boat()
 {
   if(_lifeBar) delete _lifeBar;
   if(_foodBar) delete _foodBar;
+}
+
+void Boat::setGoal(const b2Vec2 & vec)
+{
+  _goal = vec;
+  _isMoving = true;
+}
+
+void Boat::go_sound()
+{
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> d(0,100);
+
+  int id = d(gen);
+
+  if(id >= 50 && (_life <= 15 || _food <= 10)) id = 3;
+  else if(id >= 50 && (_food <= 40)) id = 4;
+  else if(id < 50 && (_food <= 60)) id = 2;
+  else if(id < 40) id = 0;
+  else if(id >= 40 && id < 80) id = 1;
+  else id = 5;
+    
+  playSound(id+5);
 }

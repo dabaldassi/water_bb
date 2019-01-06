@@ -4,6 +4,7 @@
 #include "warboat.h"
 #include "sprite.h"
 #include "island.h"
+#include "sounds.h"
 
 using actor::Warboat;
 
@@ -12,6 +13,12 @@ Warboat::Warboat(const Position & p, bool team):Boat("warboat", LIFE, p, team)
   loadSprite();
   _flag = NULL;
   _currentSprite = 0;
+  
+  addSound(COLLISION_BOAT);
+  addSound(THUNDER);
+  addSound(WIND);
+  addSound(SHUFFLE);
+  addSound(FIRE);
 }
 
 void Warboat::act(float dt)
@@ -67,6 +74,12 @@ void Warboat::collisionOn(actor::Actor *actor)
   if(dynamic_cast<Island *>(actor)) {
     _body->SetLinearVelocity(b2Vec2(0,0));
     _isMoving = false;
+    playSound(12);
+    
+  }
+  else if(dynamic_cast<Warboat *>(actor)) {
+    playSound(12);
+    _isMoving = false;
   }
 }
 
@@ -77,10 +90,12 @@ void Warboat::wind()
     
   _body->SetLinearVelocity(b2Vec2(WIDTH * 4, HEIGHT * 4));
   _body->ApplyLinearImpulse(b2Vec2(50, 50), mass.center, true);
+  playSound(14);
 }
 
 void Warboat::thunder()
 {
+  playSound(13);
   kill();
 }
 

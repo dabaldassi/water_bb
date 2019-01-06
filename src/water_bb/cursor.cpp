@@ -2,11 +2,13 @@
 #include <gameEngine/ihm/color.h>
 #include <gameEngine/game.h>
 #include <math.h>
+#include <random>
 
 #include <Box2D/Box2D.h>
 
 #include "worker_boat.h"
 #include "cursor.h"
+#include "sounds.h"
 
 using actor::Cursor;
 
@@ -25,7 +27,9 @@ Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*W
   if(_team == _turn) _turnLeft = NB_TURN;
   else _turnLeft = NB_TURN;
 
-  
+  addSound(CURSOR);
+  addSound(MOVE_ERR);
+  addSound(CHANGE_TURN);
 }
 
 void Cursor::collisionOn(Actor * a)
@@ -104,20 +108,32 @@ void Cursor::move(float dt)
   else
     ihm::Keyboard::keys[RIGHT] = ihm::Keyboard::keys[LEFT] = ihm::Keyboard::keys[FORWARD] = ihm::Keyboard::keys[BACK] = false;
   
-  if((pos.x != _body->GetPosition().x || pos.y != _body->GetPosition().y))
+  if((pos.x != _body->GetPosition().x || pos.y != _body->GetPosition().y)) {
     resetFilter(); // Reset the filter when the cursor moves and there is currently a collision with a boat
+    playSound(0);
+  }
   
   _body->SetTransform(pos, _body->GetAngle());
 }
 
 bool Cursor::checkMove()
 {
-  return (dynamic_cast<WorkerBoat *>(_boatColliding) ||
-	  (_team == _turn &&
-	   (((int)round(abs(_boatColliding->body()->GetPosition().x - _body->GetPosition().x)
+  int n = (((int)round(abs(_boatColliding->body()->GetPosition().x - _body->GetPosition().x)
 		  * Viewport::METER_TO_PIXEL / WIDTH))  |
 	   ((int)round(abs(_boatColliding->body()->GetPosition().y - _body->GetPosition().y)
-		       * Viewport::METER_TO_PIXEL / HEIGHT))) == 1));
+		       * Viewport::METER_TO_PIXEL / HEIGHT)));
+
+  if(_team == _turn && n > 1) {
+    setColorElement(_elem, RED);
+    playSound(1);
+  }
+  else if(_team == _turn) {
+    setColorElement(_elem, (_turn)?YELLOW:PURPLE);
+  }
+  
+  return (dynamic_cast<WorkerBoat *>(_boatColliding) ||
+	  (_team == _turn &&
+	    n == 1));
 }
 
 void Cursor::effect()
@@ -127,6 +143,8 @@ void Cursor::effect()
 
     if(!dynamic_cast<WorkerBoat *>(_boatColliding))
       _turnLeft--;
+
+    _boatColliding->go_sound();
   }
     
   _boatColliding->select();
@@ -154,6 +172,7 @@ void Cursor::act(float dt)
     _turn = !_turn;
     _turnLeft = NB_TURN;
     _toChange = 0;
+    playSound(2);
   }
 
   if(_toChange < 2) {

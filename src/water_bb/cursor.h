@@ -21,6 +21,7 @@ namespace actor {
     int YELLOW[4] = {255,255,0,80};
     int PURPLE[4] = {255,0,255,80};
     int WHITE[4] = {255,255,255,80};
+    int RED[4] = {255,0,0,80};
     
   public:
     static constexpr float WIDTH = WIDTH + 0.42857;

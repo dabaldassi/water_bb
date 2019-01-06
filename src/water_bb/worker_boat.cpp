@@ -1,9 +1,11 @@
 #include <Box2D/Box2D.h>
+#include <random>
 
 #include "worker_boat.h"
 #include "warboat.h"
 #include "sprite.h"
 #include "island.h"
+#include "sounds.h"
 
 using actor::WorkerBoat;
 
@@ -15,6 +17,11 @@ WorkerBoat::WorkerBoat(const Position & p, bool team):Boat("worker",LIFE,p,team)
   _capacity = 400.f;
   _isWorking = false;
   _island = NULL;
+  
+  addSound(RAVITAILLEMENT1);
+  addSound(RAVITAILLEMENT2);
+  addSound(RAVITAILLEMENT3);
+  addSound(RAVITAILLEMENT4);
 }
 
 void WorkerBoat::act(float dt)
@@ -51,8 +58,16 @@ void WorkerBoat::collisionOn(Actor * actor)
   }
   else if((boat = dynamic_cast<Warboat *>(actor))) {
 
-    if(_team == boat->team())
+    if(_team == boat->team()) {
+      std::random_device rd;
+      std::mt19937 gen(rd());
+      std::uniform_int_distribution<> d(12,15);
+
+      int id = d(gen);
+      
       boat->refuel(&_foodCollected);
+      playSound(id);
+    }
     
     b2ContactEdge * edge = _body->GetContactList();
     
