@@ -8,11 +8,17 @@
 
 using actor::Warboat;
 
+unsigned int Warboat::nb_boat_1 = 0;
+unsigned int Warboat::nb_boat_2 = 0;
+
 Warboat::Warboat(const Position & p, bool team):Boat("warboat", LIFE, p, team)
 {
   loadSprite();
   _flag = NULL;
   _currentSprite = 0;
+
+  nb_boat_1 += team;
+  nb_boat_2 += !team;
   
   addSound(COLLISION_BOAT);
   addSound(THUNDER);
@@ -27,7 +33,12 @@ void Warboat::act(float dt)
     Boat::act(dt);
   else {
     nextSpriteElement(_elem);
-    if(++_currentSprite == NB_SPRITES) kill();
+    if(++_currentSprite == NB_SPRITES) {
+      kill();
+
+      if(_team) nb_boat_1--;
+      else nb_boat_2--;
+    }
   }
   
   if(_flag && _life <= 0) {
@@ -41,6 +52,7 @@ void Warboat::act(float dt)
   getDimensionWindow(&w, &h);
 
   if(_flag && ((_team && _body->GetPosition().x * Viewport::METER_TO_PIXEL < WIDTH) || (!_team && _body->GetPosition().x * Viewport::METER_TO_PIXEL > w - WIDTH - 10))) {
+    _flag->body()->SetTransform(_body->GetPosition(), 0);
     _flag->effect();
   }
 
@@ -50,6 +62,7 @@ void Warboat::act(float dt)
     _life = 100;
     _food = 100;
   }
+  
 }
 
 void Warboat::loadSprite()
@@ -75,10 +88,11 @@ void Warboat::collisionOn(actor::Actor *actor)
     _body->SetLinearVelocity(b2Vec2(0,0));
     _isMoving = false;
     playSound(12);
-    
+    Mix_VolumeChunk(_sounds[12], 0.5);
   }
   else if(dynamic_cast<Warboat *>(actor)) {
     playSound(12);
+    Mix_VolumeChunk(_sounds[12], 20);
     _isMoving = false;
   }
 }

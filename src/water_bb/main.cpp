@@ -2,6 +2,9 @@
 #include <gameEngine/actor/static.h>
 #include <gameEngine/ihm/color.h>
 #include <gameEngine/actor/items/item.h>
+#include <gameEngine/ihm/button.h>
+#include <gameEngine/ihm/text.h>
+#include <gameEngine/ihm/font.h>
 
 #include "cursor.h"
 #include "worker_boat.h"
@@ -9,6 +12,8 @@
 #include "warboat.h"
 #include "sprite.h"
 #include "sounds.h"
+
+#include <Box2D/Box2D.h>
 
 void collisionRabbit(actor::Actor * actor, actor::Actor * b)
 {
@@ -27,7 +32,87 @@ void effectRabbit(actor::Actor * actor)
 
   rabbit->stage()->endStage();
 
-  std::cout << "win" << "\n";
+  *static_cast<bool *>(rabbit->stage()->getData()) = rabbit->body()->GetPosition().x * Viewport::METER_TO_PIXEL < actor::Warboat::WIDTH;
+}
+
+bool end_menu(float dt)
+{
+  DataWindow * d;
+
+  getDataWindow((void **)&d);
+  
+  return d->param == 1;
+}
+
+void replay(Element * e, int button)
+{
+  DataWindow * d;
+
+  getDataWindow((void **)&d);
+
+  d->param = 2;
+}
+
+void quit(Element * e, int button)
+{
+  DataWindow * d;
+
+  getDataWindow((void **)&d);
+
+  d->param = 3;
+}
+
+void motion(Element * e)
+{
+  setTextColorElement(e, Color::red);
+}
+
+void exitmotion(Element * e)
+{
+  setTextColorElement(e, Color::white);
+}
+
+void ending(Stage * stage, void * data) {
+  DataWindow * dw;
+  int w, h;
+  std::string msg("Victoire du joueur ");
+  int trans[] = {0,0,0,0};
+  Element * e;
+
+  getDimensionWindow(&w, &h);
+  
+  msg = msg+ std::to_string(!*static_cast<bool *>(data)+1);
+  
+  getDataWindow((void **)&dw);
+
+  while(stage->actors().size() > 0) {
+    stage->actors().pop_back();
+  }
+ 
+  createText(w/4, h/4, 1200, 100, 50, FREE_MONO_BOLD, msg.c_str(), Color::white, SANDAL2_BLENDED, 0, 0);
+  e = createButton(w/4, h/2, 200, 100, 50, FREE_MONO_BOLD, "Rejouer", Color::white, SANDAL2_BLENDED, trans, 0, 0);
+  addClickableElement(e, rectangleClickable(0, 0, 1, 1), 0);
+  setOnClickElement(e, replay);
+  setOnMouseMotionElement(e, motion);
+  setUnMouseMotionElement(e, exitmotion);
+  
+  e = createButton(3*w/4, h/2, 200, 100, 50, FREE_MONO_BOLD, "Quitter", Color::white, SANDAL2_BLENDED, trans, 0, 0);
+  addClickableElement(e, rectangleClickable(0, 0, 1, 1), 0);
+  setOnClickElement(e, quit);
+  setOnMouseMotionElement(e, motion);
+  setUnMouseMotionElement(e, exitmotion);
+
+  dw->game->event_manager(end_menu);
+  
+  if(dw->param == 2) {
+    dw->param = 1;
+    clearDisplayCode(0);
+    stage->disableEnd();
+    stage->generate();
+  }
+  else 
+    dw->param = 0;
+  
 }
 
 void generate(Stage * stage)
@@ -42,6 +127,10 @@ void generate(Stage * stage)
   float SIZE_BLOCK_H = h/(float)NB_BLOCK_H;
 
   int sea_color[] = {38,120,155,255};
+
+  b2Body * b = stage->world().GetBodyList();
+
+  while(b) std::cout << "body" << "\n";
 
   SDL_SetRenderTarget(_windows_SANDAL2->current->renderer, NULL);
   SDL_SetRenderDrawBlendMode(_windows_SANDAL2->current->renderer, SDL_BLENDMODE_BLEND);
@@ -77,6 +166,9 @@ void generate(Stage * stage)
   stage->create<actor::Island>(Position(14*SIZE_BLOCK_W,0,actor::Island::WIDTH, actor::Island::HEIGHT));
 
   stage->create<actor::Island>(Position(9*SIZE_BLOCK_W,7*SIZE_BLOCK_H ,actor::Island::WIDTH, actor::Island::HEIGHT));
+
+  actor::Warboat::nb_boat_1 = 0;
+  actor::Warboat::nb_boat_2 = 0;
   
   for(int j = 0; j < 2; j++)
     for(int i = 0; i < NB_BLOCK_H ; i++)
@@ -90,6 +182,20 @@ void generate(Stage * stage)
   
   stage->addMusic(MUSIC_MAIN_PHASE);
   stage->playMusic(0);
+  bool * dataEnd = new bool;
+
+  stage->setData(dataEnd);
+  
+  stage->setEndStage([](void * data) {
+      bool * d = static_cast<bool *>(data);
+      if(actor::Warboat::nb_boat_1 == 0) *d = false;
+      else if(actor::Warboat::nb_boat_2 == 0) *d = true;
+      else return false;
+      return true;});
+
+  stage->endCallback(ending);
+
+  
 }
 
 int main()

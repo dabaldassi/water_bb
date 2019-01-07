@@ -14,6 +14,8 @@ namespace actor {
   public:
     static constexpr float LIFE = 100.f;
     static constexpr int   NB_SPRITES = 10;
+    static unsigned int nb_boat_1;
+    static unsigned int nb_boat_2;
     
     Warboat(){}
     Warboat(const Position & p, bool team);

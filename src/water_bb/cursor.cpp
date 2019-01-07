@@ -17,6 +17,8 @@ int Cursor::_toChange = 0;
 
 Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*WIDTH),4*HEIGHT,WIDTH,HEIGHT))
 {
+  _toChange = 0;
+  _turn = false;
   _boatColliding = NULL;
   _team = team;
   
@@ -30,6 +32,7 @@ Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*W
   addSound(CURSOR);
   addSound(MOVE_ERR);
   addSound(CHANGE_TURN);
+  
 }
 
 void Cursor::collisionOn(Actor * a)
@@ -123,9 +126,10 @@ bool Cursor::checkMove()
 	   ((int)round(abs(_boatColliding->body()->GetPosition().y - _body->GetPosition().y)
 		       * Viewport::METER_TO_PIXEL / HEIGHT)));
 
-  if(_team == _turn && n > 1) {
+  if(_team == _turn && n > 1 && !dynamic_cast<WorkerBoat *>(_boatColliding)) {
     setColorElement(_elem, RED);
     playSound(1);
+    Mix_VolumeChunk(_sounds[1], 1000);
   }
   else if(_team == _turn) {
     setColorElement(_elem, (_turn)?YELLOW:PURPLE);

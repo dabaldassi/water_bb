@@ -49,6 +49,8 @@ void WorkerBoat::collisionOn(Actor * actor)
 {
   Island * island;
   Warboat * boat;
+
+  std::cout << "collision" << "\n";
   
   if((island = dynamic_cast<Island *>(actor))) {
     _isWorking = true;
