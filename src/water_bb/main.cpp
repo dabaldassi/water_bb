@@ -161,6 +161,9 @@ void generate(Stage * stage)
 
   createBlock(0, 0, w, h, sea_color, 0, 5);
 
+  updateWindow();
+  displayWindow();
+
   actor::Item * rabbit = &stage->create<actor::Item>("rabbit",
 						    Position(SIZE_BLOCK_W * (NB_BLOCK_W>>1) +
 							     (SIZE_BLOCK_W - 85) / 2.f,
@@ -173,13 +176,43 @@ void generate(Stage * stage)
   rabbit->addCollisionOnStatement(collisionRabbit);
   rabbit->addEffectStatement(effectRabbit);
   rabbit->addSound(RABBIT_ALERT);
+
+  b2Filter filter;
+  filter.maskBits = 0xffff;
+  filter.categoryBits = 0x1000;
+  rabbit->body()->GetFixtureList()->SetFilterData(filter);
   
-  stage->create<actor::WorkerBoat>(Position(SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
-					    4*SIZE_BLOCK_H +
+  stage->create<actor::WorkerBoat>(Position(3*SIZE_BLOCK_W +
+					    SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
+					    2*SIZE_BLOCK_H +
 					    (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
 					    actor::WorkerBoat::WIDTH,
 					    actor::WorkerBoat::HEIGHT),
 				   true
+				   );
+  stage->create<actor::WorkerBoat>(Position(3*SIZE_BLOCK_W +
+					    SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
+					    5*SIZE_BLOCK_H +
+					    (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
+					    actor::WorkerBoat::WIDTH,
+					    actor::WorkerBoat::HEIGHT),
+				   true
+				   );
+  stage->create<actor::WorkerBoat>(Position(17*SIZE_BLOCK_W +
+					    SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
+					    2*SIZE_BLOCK_H +
+					    (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
+					    actor::WorkerBoat::WIDTH,
+					    actor::WorkerBoat::HEIGHT),
+				   false
+				   );
+  stage->create<actor::WorkerBoat>(Position(17*SIZE_BLOCK_W +
+					    SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
+					    5*SIZE_BLOCK_H +
+					    (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
+					    actor::WorkerBoat::WIDTH,
+					    actor::WorkerBoat::HEIGHT),
+				   false
 				   );
   
   stage->create<actor::Cursor>(true);

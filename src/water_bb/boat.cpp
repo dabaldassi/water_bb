@@ -21,7 +21,7 @@ Boat::Boat(const std::string name, float life, const Position & p, bool team):Mo
   mass.mass = 50000;
   
   filter.categoryBits = CATEGORY;
-  filter.maskBits = Cursor::CATEGORY | Island::CATEGORY | Boat::CATEGORY;// | 0xffff;
+  filter.maskBits = Cursor::CATEGORY | Island::CATEGORY | Boat::CATEGORY | 0x1000;// | 0xffff;
 
   _body->SetMassData(&mass);
   _body->GetFixtureList()->SetFilterData(filter);
