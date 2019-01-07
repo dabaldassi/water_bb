@@ -35,7 +35,6 @@ void WorkerBoat::act(float dt)
   if(_isWorking) _foodCollected += _island->take();
 
   if(_isWorking && (_foodCollected >= _capacity || _island->empty())) {
-    _isWorking = false;
     setDisplayCodeElement(_elem, 0, 1);
     setGoal(_lastPos);
   }
@@ -49,9 +48,7 @@ void WorkerBoat::collisionOn(Actor * actor)
 {
   Island * island;
   Warboat * boat;
-
-  std::cout << "collision" << "\n";
-  
+ 
   if((island = dynamic_cast<Island *>(actor))) {
     _isWorking = true;
     _isMoving = false;
@@ -104,16 +101,14 @@ void WorkerBoat::loadSprite()
 void WorkerBoat::setGoal(const b2Vec2 &vec)
 {
   if(_isWorking) {
-    if(vec != _island->body()->GetPosition()) {
       _isWorking = false;
       _island = NULL;
       Boat::setGoal(vec);
-    }
   }
-  else
+  else {
     Boat::setGoal(vec);
-
-  _lastPos = _body->GetPosition();
+    _lastPos = _body->GetPosition();
+  }
 }
 
 void WorkerBoat::display()

@@ -12,13 +12,13 @@
 
 using actor::Cursor;
 
-bool Cursor::_turn = false;
+bool Cursor::_turn = true;
 int Cursor::_toChange = 0;
 
 Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*WIDTH),4*HEIGHT,WIDTH,HEIGHT))
 {
   _toChange = 0;
-  _turn = false;
+  _turn = true;
   _boatColliding = NULL;
   _team = team;
   
