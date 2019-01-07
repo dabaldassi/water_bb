@@ -2,6 +2,7 @@
 #include <gameEngine/actor/static.h>
 #include <gameEngine/ihm/color.h>
 #include <gameEngine/actor/items/item.h>
+#include <gameEngine/actor/items/weapon.h>
 #include <gameEngine/ihm/button.h>
 #include <gameEngine/ihm/text.h>
 #include <gameEngine/ihm/font.h>
@@ -21,9 +22,12 @@ void collisionRabbit(actor::Actor * actor, actor::Actor * b)
   actor::Warboat * boat = dynamic_cast<actor::Warboat *>(b);
 
   if(rabbit->isOnTheGround() && boat) {
-    boat->pickFlag(rabbit->pick());
+    rabbit->pick(boat);
     rabbit->playSound(0);
   }
+
+  std::cout << "rabbit" << "\n";
+  
 }
 
 void effectRabbit(actor::Actor * actor)
@@ -31,7 +35,6 @@ void effectRabbit(actor::Actor * actor)
   actor::Item * rabbit = static_cast<actor::Item *>(actor);
 
   rabbit->stage()->endStage();
-
   *static_cast<bool *>(rabbit->stage()->getData()) = rabbit->body()->GetPosition().x * Viewport::METER_TO_PIXEL < actor::Warboat::WIDTH;
 }
 
@@ -115,6 +118,30 @@ void ending(Stage * stage, void * data) {
   
 }
 
+void canonEffect(actor::Actor * actor, actor::Actor * b)
+{
+  b2Vec2 pos = b->body()->GetPosition();
+  const b2Vec2 & goal = static_cast<actor::Warboat *>(b)->getGoalCanon();
+  
+  actor::Moveable * ball = &actor->stage()->create<actor::Moveable>("ball", 1, Position(pos.x * Viewport::METER_TO_PIXEL, pos.y * Viewport::METER_TO_PIXEL, 8,8));
+
+  float  deltaX = abs(goal.x - pos.x);
+  float  deltaY = goal.y - pos.y;
+  float  angle = atanf(deltaY / deltaX);
+  
+  ball->body()->SetLinearVelocity(b2Vec2(((goal.x < pos.x)?-1:1) * 10*cosf(angle), 10*sinf(angle)));
+  pos.x += ((goal.x < pos.x)?-1:1) * actor::Warboat::WIDTH / Viewport::METER_TO_PIXEL;
+  ball->body()->SetTransform(pos, 0);
+  ball->body()->GetFixtureList()->SetDensity(0.7f);
+
+  b2MassData mass;
+  ball->body()->GetMassData(&mass);
+  mass.mass = 100;
+  ball->body()->SetMassData(&mass);
+  
+  ball->loadSprite(Color::black);
+}
+
 void generate(Stage * stage)
 {
   int w,h;
@@ -127,11 +154,7 @@ void generate(Stage * stage)
   float SIZE_BLOCK_H = h/(float)NB_BLOCK_H;
 
   int sea_color[] = {38,120,155,255};
-
-  b2Body * b = stage->world().GetBodyList();
-
-  while(b) std::cout << "body" << "\n";
-
+  
   SDL_SetRenderTarget(_windows_SANDAL2->current->renderer, NULL);
   SDL_SetRenderDrawBlendMode(_windows_SANDAL2->current->renderer, SDL_BLENDMODE_BLEND);
   SDL_SetRenderDrawColor(_windows_SANDAL2->current->renderer, 128, 128, 128, 255);
@@ -170,15 +193,21 @@ void generate(Stage * stage)
   actor::Warboat::nb_boat_1 = 0;
   actor::Warboat::nb_boat_2 = 0;
   
-  for(int j = 0; j < 2; j++)
-    for(int i = 0; i < NB_BLOCK_H ; i++)
-      stage->create<actor::Warboat>(Position(SIZE_BLOCK_W + j * (NB_BLOCK_W - 3) * SIZE_BLOCK_W +
-					     (SIZE_BLOCK_W / 2.f - actor::Boat::WIDTH / 2.f),
-  					     i*SIZE_BLOCK_H +
-					     (SIZE_BLOCK_H/2.f - actor::Boat::HEIGHT/2.f),
-  					     actor::Boat::WIDTH,
-  					     actor::Boat::HEIGHT),
-  				    j==0);
+  for(int j = 0; j < 2; j++) {
+    for(int i = 0; i < NB_BLOCK_H ; i++) {
+      actor::Warboat *warboat =
+	&stage->create<actor::Warboat>(Position(SIZE_BLOCK_W + j * (NB_BLOCK_W - 3) * SIZE_BLOCK_W +
+						(SIZE_BLOCK_W / 2.f - actor::Boat::WIDTH / 2.f),
+						i*SIZE_BLOCK_H +
+						(SIZE_BLOCK_H/2.f - actor::Boat::HEIGHT/2.f),
+						actor::Boat::WIDTH,
+						actor::Boat::HEIGHT),
+				       j==0);
+      actor::Weapon * canon = &stage->create<actor::Weapon>("canon", Position(0,0,100,100), warboat, 500);
+      canon->set(20.f, 750.f);
+      canon->addEffectStatement(canonEffect);
+    }
+  }
   
   stage->addMusic(MUSIC_MAIN_PHASE);
   stage->playMusic(0);

@@ -14,6 +14,7 @@ namespace actor {
     Boat * _boatColliding;
     bool   _team;
     int    _turnLeft;
+    int    _canonLeft;
 
     static bool _turn;
     static int  _toChange;

@@ -5,11 +5,15 @@
 
 namespace actor {
 
+  class Weapon;
+  
   class Warboat : public Boat
   {
   protected:
     Item * _flag;
+    Weapon * _canon;
     int    _currentSprite;
+    b2Vec2  _goalCanon;
     
   public:
     static constexpr float LIFE = 100.f;
@@ -25,8 +29,12 @@ namespace actor {
     virtual void effect(Actor * actor){}
     virtual void loadSprite();
     virtual void collisionOn(Actor * actor);
+    virtual void attack(const b2Vec2 & pos);
+    virtual const b2Vec2 & getGoalCanon() const { return _goalCanon; }
 
-    virtual void pickFlag(Item * item)  { _flag = item; };
+    virtual void addItem(Item * item);
+    virtual void removeItem(Item *) { _flag = NULL; }
+    
     virtual bool deadboat() const { return _currentSprite >= 2; }
 
     void wind();

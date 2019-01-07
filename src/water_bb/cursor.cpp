@@ -9,6 +9,7 @@
 #include "worker_boat.h"
 #include "cursor.h"
 #include "sounds.h"
+#include "warboat.h"
 
 using actor::Cursor;
 
@@ -26,8 +27,8 @@ Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*W
 
   loadSprite();
 
-  if(_team == _turn) _turnLeft = NB_TURN;
-  else _turnLeft = NB_TURN;
+  _turnLeft = NB_TURN;
+  _canonLeft = NB_TURN;
 
   addSound(CURSOR);
   addSound(MOVE_ERR);
@@ -172,9 +173,23 @@ void Cursor::act(float dt)
     ihm::Keyboard::keys[JUMP] = false;
   }
 
+  if(ihm::Keyboard::keys[ATTACK] && _boatColliding && _boatColliding->isSelected() && _team == _turn && _canonLeft > 0) {
+    Warboat * b;
+    if((b=dynamic_cast<Warboat *>(_boatColliding))) {
+      b->attack(_body->GetPosition());
+    }
+
+    _boatColliding->select();
+    _boatColliding = NULL;
+    _canonLeft--;
+    
+    ihm::Keyboard::keys[ATTACK] = false;
+  }
+
   if(_turnLeft == 0 && _turn == _team) {
     _turn = !_turn;
     _turnLeft = NB_TURN;
+    _canonLeft = NB_TURN;
     _toChange = 0;
     playSound(2);
   }

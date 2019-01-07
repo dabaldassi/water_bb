@@ -1,5 +1,8 @@
 #include <Box2D/Box2D.h>
 #include <random>
+#include <gameEngine/actor/items/weapon.h>
+#include <gameEngine/stage.h>
+
 
 #include "warboat.h"
 #include "sprite.h"
@@ -25,6 +28,25 @@ Warboat::Warboat(const Position & p, bool team):Boat("warboat", LIFE, p, team)
   addSound(WIND);
   addSound(SHUFFLE);
   addSound(FIRE);
+
+  Mix_VolumeChunk(_sounds[16], 500);
+}
+
+void Warboat::attack(const b2Vec2 & pos)
+{
+  _goalCanon = pos;
+  _canon->effect(this);
+  playSound(16);
+}
+
+void Warboat::addItem(actor::Item *item)
+{
+  
+  if(item->getName() == "canon") {
+    _canon = static_cast<Weapon *>(item);
+  }
+  else _flag = item;
+
 }
 
 void Warboat::act(float dt)
@@ -43,7 +65,6 @@ void Warboat::act(float dt)
   
   if(_flag && _life <= 0) {
     _flag->drop(_body->GetPosition());
-    _flag = NULL;
   }
   
   if(_isMoving && !deadboat()) move();
@@ -61,8 +82,7 @@ void Warboat::act(float dt)
     _currentSprite = 2;
     _life = 100;
     _food = 100;
-  }
-  
+  }  
 }
 
 void Warboat::loadSprite()
@@ -94,6 +114,11 @@ void Warboat::collisionOn(actor::Actor *actor)
     playSound(12);
     Mix_VolumeChunk(_sounds[12], 20);
     _isMoving = false;
+  }
+  else if(actor->getName() == "ball") {
+    _life -= _canon->getDamage();
+    actor->kill();
+    playSound(11);
   }
 }
 
