@@ -114,7 +114,7 @@ void Cursor::move(float dt)
   
   if((pos.x != _body->GetPosition().x || pos.y != _body->GetPosition().y)) {
     resetFilter(); // Reset the filter when the cursor moves and there is currently a collision with a boat
-    playSound(0);
+    playSound(CURSOR);
   }
   
   _body->SetTransform(pos, _body->GetAngle());
@@ -122,15 +122,15 @@ void Cursor::move(float dt)
 
 bool Cursor::checkMove()
 {
-  int n = (((int)round(abs(_boatColliding->body()->GetPosition().x - _body->GetPosition().x)
-		  * Viewport::METER_TO_PIXEL / WIDTH))  |
-	   ((int)round(abs(_boatColliding->body()->GetPosition().y - _body->GetPosition().y)
-		       * Viewport::METER_TO_PIXEL / HEIGHT)));
+  int n = (((int)round(abs(_boatColliding->getPosition<b2Vec2>().x - getPosition<b2Vec2>().x)
+		       / WIDTH))  |
+	   ((int)round(abs(_boatColliding->getPosition<b2Vec2>().y - getPosition<b2Vec2>().y)
+		       / HEIGHT)));
 
   if(_team == _turn && n > 1 && !dynamic_cast<WorkerBoat *>(_boatColliding)) {
     setColorElement(_elem, RED);
-    playSound(1);
-    Mix_VolumeChunk(_sounds[1], 1000);
+    playSound(MOVE_ERR);
+    Mix_VolumeChunk(_sounds[MOVE_ERR], 1000);
   }
   else if(_team == _turn) {
     setColorElement(_elem, (_turn)?YELLOW:PURPLE);
@@ -191,7 +191,7 @@ void Cursor::act(float dt)
     _turnLeft = NB_TURN;
     _canonLeft = NB_TURN;
     _toChange = 0;
-    playSound(2);
+    playSound(CHANGE_TURN);
   }
 
   if(_toChange < 2) {

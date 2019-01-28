@@ -9,6 +9,8 @@
 
 using actor::WorkerBoat;
 
+#define NEXT(A) 
+
 WorkerBoat::WorkerBoat(const Position & p, bool team):Boat("worker",LIFE,p,team)
 {
   loadSprite();
@@ -60,12 +62,13 @@ void WorkerBoat::collisionOn(Actor * actor)
     if(_team == boat->team()) {
       std::random_device rd;
       std::mt19937 gen(rd());
-      std::uniform_int_distribution<> d(12,15);
+      std::uniform_int_distribution<> d(0,3);
+      std::string sounds[] = {RAVITAILLEMENT1,RAVITAILLEMENT2,RAVITAILLEMENT3,RAVITAILLEMENT4};
 
       int id = d(gen);
       
       boat->refuel(&_foodCollected);
-      playSound(id);
+      playSound(sounds[id]);
     }
     
     b2ContactEdge * edge = _body->GetContactList();
@@ -114,7 +117,7 @@ void WorkerBoat::setGoal(const b2Vec2 &vec)
 void WorkerBoat::display()
 {
   int brown[] = {65,45,35,255};
-  const b2Vec2 & p = _body->GetPosition() * Viewport::METER_TO_PIXEL;
+  const b2Vec2 & p = getPosition<b2Vec2>();
   
   Boat::display();
   

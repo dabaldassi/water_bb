@@ -29,14 +29,14 @@ Warboat::Warboat(const Position & p, bool team):Boat("warboat", LIFE, p, team)
   addSound(SHUFFLE);
   addSound(FIRE);
 
-  Mix_VolumeChunk(_sounds[16], 500);
+  Mix_VolumeChunk(_sounds[FIRE], 500);
 }
 
 void Warboat::attack(const b2Vec2 & pos)
 {
   _goalCanon = pos;
   _canon->effect(this);
-  playSound(16);
+  playSound(FIRE);
 }
 
 void Warboat::addItem(actor::Item *item)
@@ -72,7 +72,7 @@ void Warboat::act(float dt)
   int w,h;
   getDimensionWindow(&w, &h);
 
-  if(_flag && ((_team && _body->GetPosition().x * Viewport::METER_TO_PIXEL < WIDTH) || (!_team && _body->GetPosition().x * Viewport::METER_TO_PIXEL > w - WIDTH - 10))) {
+  if(_flag && ((_team && getPosition<b2Vec2>().x < WIDTH) || (!_team && getPosition<b2Vec2>().x > w - WIDTH - 10))) {
     _flag->body()->SetTransform(_body->GetPosition(), 0);
     _flag->effect();
   }
@@ -107,18 +107,18 @@ void Warboat::collisionOn(actor::Actor *actor)
   if(dynamic_cast<Island *>(actor)) {
     _body->SetLinearVelocity(b2Vec2(0,0));
     _isMoving = false;
-    playSound(12);
-    Mix_VolumeChunk(_sounds[12], 0.5);
+    playSound(COLLISION_BOAT);
+    Mix_VolumeChunk(_sounds[COLLISION_BOAT], 0.5);
   }
   else if(dynamic_cast<Warboat *>(actor)) {
-    playSound(12);
-    Mix_VolumeChunk(_sounds[12], 20);
+    playSound(COLLISION_BOAT);
+    Mix_VolumeChunk(_sounds[COLLISION_BOAT], 20);
     _isMoving = false;
   }
   else if(actor->getName() == "ball") {
     _life -= _canon->getDamage();
     actor->kill();
-    playSound(11);
+    playSound(DEADBOAT);
   }
 }
 
@@ -129,12 +129,12 @@ void Warboat::wind()
     
   _body->SetLinearVelocity(b2Vec2(WIDTH * 4, HEIGHT * 4));
   _body->ApplyLinearImpulse(b2Vec2(50, 50), mass.center, true);
-  playSound(14);
+  playSound(WIND);
 }
 
 void Warboat::thunder()
 {
-  playSound(13);
+  playSound(THUNDER);
   kill();
 }
 

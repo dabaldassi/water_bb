@@ -35,7 +35,7 @@ void effectRabbit(actor::Actor * actor)
   actor::Item * rabbit = static_cast<actor::Item *>(actor);
 
   rabbit->stage()->endStage();
-  *static_cast<bool *>(rabbit->stage()->getData()) = rabbit->body()->GetPosition().x * Viewport::METER_TO_PIXEL < actor::Warboat::WIDTH;
+  *static_cast<bool *>(rabbit->stage()->getData()) = rabbit->getPosition<b2Vec2>().x < actor::Warboat::WIDTH;
 }
 
 bool end_menu(float dt)
@@ -123,7 +123,7 @@ void canonEffect(actor::Actor * actor, actor::Actor * b)
   b2Vec2 pos = b->body()->GetPosition();
   const b2Vec2 & goal = static_cast<actor::Warboat *>(b)->getGoalCanon();
   
-  actor::Moveable * ball = &actor->stage()->create<actor::Moveable>("ball", 1, Position(pos.x * Viewport::METER_TO_PIXEL, pos.y * Viewport::METER_TO_PIXEL, 8,8));
+  actor::Moveable * ball = &actor->stage()->create<actor::Moveable>("ball", 1, Position(pos.x, pos.y, 8,8));
 
   float  deltaX = abs(goal.x - pos.x);
   float  deltaY = goal.y - pos.y;
@@ -145,7 +145,7 @@ void canonEffect(actor::Actor * actor, actor::Actor * b)
 void generate(Stage * stage)
 {
   int w,h;
-
+  
   getDimensionWindow(&w, &h);
   
   int NB_BLOCK_W = 21;
@@ -154,24 +154,23 @@ void generate(Stage * stage)
   float SIZE_BLOCK_H = h/(float)NB_BLOCK_H;
 
   int sea_color[] = {38,120,155,255};
-  
-  SDL_SetRenderTarget(_windows_SANDAL2->current->renderer, NULL);
-  SDL_SetRenderDrawBlendMode(_windows_SANDAL2->current->renderer, SDL_BLENDMODE_BLEND);
-  SDL_SetRenderDrawColor(_windows_SANDAL2->current->renderer, 128, 128, 128, 255);
 
   createBlock(0, 0, w, h, sea_color, 0, 5);
 
-  updateWindow();
-  displayWindow();
+  auto pos = [&SIZE_BLOCK_W, &SIZE_BLOCK_H](float x,float y, float w, float h) {
+    return Position(SIZE_BLOCK_W * x + (SIZE_BLOCK_W - w) / 2.f,
+		    SIZE_BLOCK_H * y +  (SIZE_BLOCK_H - h) / 2.f,
+		    w, h);
+  };
 
-  actor::Item * rabbit = &stage->create<actor::Item>("rabbit",
-						    Position(SIZE_BLOCK_W * (NB_BLOCK_W>>1) +
-							     (SIZE_BLOCK_W - 85) / 2.f,
-							     SIZE_BLOCK_H * (NB_BLOCK_H>>1) +
-							     (SIZE_BLOCK_H - 85) / 2.f,
-							     85,
-							     85),
-						     12.f);
+  auto createWorkerBoat = [&stage,&SIZE_BLOCK_W,&SIZE_BLOCK_H,&pos](int w,int h) {
+    stage->create<actor::WorkerBoat>(pos(w, h,actor::WorkerBoat::WIDTH,actor::WorkerBoat::HEIGHT),
+				     w == 3 );
+  };
+
+  actor::Item * rabbit =
+    &stage->create<actor::Item>("rabbit", pos(NB_BLOCK_W>>1, NB_BLOCK_H>>1,85,85),12.f);
+  
   rabbit->loadSprite(RABBIT);
   rabbit->addCollisionOnStatement(collisionRabbit);
   rabbit->addEffectStatement(effectRabbit);
@@ -182,59 +181,22 @@ void generate(Stage * stage)
   filter.categoryBits = 0x1000;
   rabbit->body()->GetFixtureList()->SetFilterData(filter);
   
-  stage->create<actor::WorkerBoat>(Position(3*SIZE_BLOCK_W +
-					    SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
-					    2*SIZE_BLOCK_H +
-					    (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
-					    actor::WorkerBoat::WIDTH,
-					    actor::WorkerBoat::HEIGHT),
-				   true
-				   );
-  stage->create<actor::WorkerBoat>(Position(3*SIZE_BLOCK_W +
-					    SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
-					    5*SIZE_BLOCK_H +
-					    (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
-					    actor::WorkerBoat::WIDTH,
-					    actor::WorkerBoat::HEIGHT),
-				   true
-				   );
-  stage->create<actor::WorkerBoat>(Position(17*SIZE_BLOCK_W +
-					    SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
-					    2*SIZE_BLOCK_H +
-					    (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
-					    actor::WorkerBoat::WIDTH,
-					    actor::WorkerBoat::HEIGHT),
-				   false
-				   );
-  stage->create<actor::WorkerBoat>(Position(17*SIZE_BLOCK_W +
-					    SIZE_BLOCK_W / 2.f - actor::WorkerBoat::WIDTH / 2.f,
-					    5*SIZE_BLOCK_H +
-					    (SIZE_BLOCK_H/2.f - actor::WorkerBoat::HEIGHT / 2.f),
-					    actor::WorkerBoat::WIDTH,
-					    actor::WorkerBoat::HEIGHT),
-				   false
-				   );
+  createWorkerBoat(3,5);
+  createWorkerBoat(3,2);
+  createWorkerBoat(17,5);
+  createWorkerBoat(17,2);
   
   stage->create<actor::Cursor>(true);
   stage->create<actor::Cursor>(false);
 
-  stage->create<actor::Island>(Position(4*SIZE_BLOCK_W,0,actor::Island::WIDTH, actor::Island::HEIGHT));
-  stage->create<actor::Island>(Position(14*SIZE_BLOCK_W,0,actor::Island::WIDTH, actor::Island::HEIGHT));
+  stage->create<actor::Island>(pos(5,0,actor::Island::WIDTH, actor::Island::HEIGHT));
+  stage->create<actor::Island>(pos(15,0,actor::Island::WIDTH, actor::Island::HEIGHT));
+  stage->create<actor::Island>(pos(10,7 ,actor::Island::WIDTH, actor::Island::HEIGHT));
 
-  stage->create<actor::Island>(Position(9*SIZE_BLOCK_W,7*SIZE_BLOCK_H ,actor::Island::WIDTH, actor::Island::HEIGHT));
-
-  actor::Warboat::nb_boat_1 = 0;
-  actor::Warboat::nb_boat_2 = 0;
-  
   for(int j = 0; j < 2; j++) {
     for(int i = 0; i < NB_BLOCK_H ; i++) {
       actor::Warboat *warboat =
-	&stage->create<actor::Warboat>(Position(SIZE_BLOCK_W + j * (NB_BLOCK_W - 3) * SIZE_BLOCK_W +
-						(SIZE_BLOCK_W / 2.f - actor::Boat::WIDTH / 2.f),
-						i*SIZE_BLOCK_H +
-						(SIZE_BLOCK_H/2.f - actor::Boat::HEIGHT/2.f),
-						actor::Boat::WIDTH,
-						actor::Boat::HEIGHT),
+	&stage->create<actor::Warboat>(pos(1 + j * (NB_BLOCK_W - 3),i, actor::Boat::WIDTH, actor::Boat::HEIGHT),
 				       j==0);
       actor::Weapon * canon = &stage->create<actor::Weapon>("canon", Position(0,0,100,100), warboat, 500);
       canon->set(20.f, 750.f);
@@ -256,8 +218,6 @@ void generate(Stage * stage)
       return true;});
 
   stage->endCallback(ending);
-
-  
 }
 
 int main()

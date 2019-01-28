@@ -13,7 +13,12 @@ Boat::Boat(const std::string name, float life, const Position & p, bool team):Mo
 {
   b2MassData mass;
   b2Filter filter;
+  std::vector<std::string> sound = {SELECTION1, SELECTION2, SELECTION3, SELECTION4, SELECTION5,
+				    DEPART1,DEPART2, DEPART3, DEPART4, DEPART5,DEPART6, DEADBOAT};
 
+
+  std::for_each(sound.begin(), sound.end(), [&](std::string s) {this->addSound(s);});
+  
   _body->GetMassData(&mass);
   _body->SetLinearDamping(50.f);
   _body->SetAngularDamping(50.f);
@@ -36,18 +41,7 @@ Boat::Boat(const std::string name, float life, const Position & p, bool team):Mo
   _lifeBar = NULL;
   _foodBar = NULL;
   
-  addSound(SELECTION1);
-  addSound(SELECTION2);
-  addSound(SELECTION3);
-  addSound(SELECTION4);
-  addSound(SELECTION5);
-  addSound(DEPART1);
-  addSound(DEPART2);
-  addSound(DEPART3);
-  addSound(DEPART4);
-  addSound(DEPART5);
-  addSound(DEPART6);
-  addSound(DEADBOAT);
+  
 }
 
 void Boat::move(float dt)
@@ -83,11 +77,6 @@ b2Vec2 operator/(const b2Vec2 & vec, float div)
   return b2Vec2(vec.x/div, vec.y/div);
 }
 
-b2Vec2 operator*(const b2Vec2 & vec, float coeff)
-{
-  return b2Vec2(vec.x*coeff, vec.y*coeff);
-}
-
 bool operator!=(const b2Vec2 & vec1, const b2Vec2 & vec2) 
 {
   return (vec1.x - vec2.x) > 0.001 || (vec1.y - vec2.y) > 0.001;
@@ -102,6 +91,7 @@ void Boat::select()
       std::random_device rd;
       std::mt19937 gen(rd());
       std::uniform_int_distribution<> d(0,100);
+      std::string sound[] = {SELECTION1,SELECTION2,SELECTION3,SELECTION4,SELECTION5};
 
       int id = d(gen);
      
@@ -111,7 +101,7 @@ void Boat::select()
       else if(id >= 30 && id < 60) id = 2;
       else id = 3;
 
-      playSound(id);
+      playSound(sound[id]);
       
       display();
     }
@@ -121,15 +111,12 @@ void Boat::select()
 
 void Boat::display()
 {
-  const b2Vec2 & p = _body->GetPosition();
+  const b2Vec2 & p = getPosition<b2Vec2>();
   int green[4] = {10,150,10,180};
   int blue[4] = {10,10,150,255};
   
-  
-  _lifeBar = new ihm::ProgressBar(Position(p.x * Viewport::METER_TO_PIXEL, p.y * Viewport::METER_TO_PIXEL + WIDTH/3, WIDTH - 10, 4),green,_life/100.f);
-
-  _foodBar = new ihm::ProgressBar(Position(p.x * Viewport::METER_TO_PIXEL, p.y * Viewport::METER_TO_PIXEL - WIDTH/3, WIDTH - 10, 4),blue,_life/100.f);
-  
+  _lifeBar = new ihm::ProgressBar(Position(p.x, p.y + WIDTH/3, WIDTH - 10, 4),green,_life/100.f);
+  _foodBar = new ihm::ProgressBar(Position(p.x, p.y - WIDTH/3, WIDTH - 10, 4),blue,_life/100.f);
 }
 
 void Boat::clearDisplay()
@@ -156,7 +143,7 @@ void Boat::act(float dt)
 
   if(_life <= 0 || _food <= 0) {
     kill();
-    playSound(11);
+    playSound(DEADBOAT);
   }
   
 }
@@ -188,6 +175,7 @@ void Boat::go_sound()
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution<> d(0,100);
+  std::string sound[] = {DEPART1,DEPART2,DEPART3,DEPART4,DEPART5,DEPART6};
 
   int id = d(gen);
 
@@ -198,5 +186,5 @@ void Boat::go_sound()
   else if(id >= 40 && id < 80) id = 1;
   else id = 5;
     
-  playSound(id+5);
+  playSound(sound[id]);
 }

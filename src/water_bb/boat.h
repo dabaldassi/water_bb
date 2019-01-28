@@ -8,7 +8,6 @@
 #include "parameters.h"
 
 b2Vec2 operator/(const b2Vec2 & vec, float div);
-b2Vec2 operator*(const b2Vec2 & vec, float coeff);
 bool operator!=(const b2Vec2 & vec1, const b2Vec2 & vec2);
 
 namespace actor {
