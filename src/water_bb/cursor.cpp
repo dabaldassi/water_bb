@@ -16,7 +16,7 @@ using actor::Cursor;
 bool Cursor::_turn = true;
 int Cursor::_toChange = 0;
 
-Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*WIDTH),4*HEIGHT,WIDTH,HEIGHT))
+Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(12*WIDTH),4*HEIGHT,WIDTH,HEIGHT))
 {
   _toChange = 0;
   _turn = true;
@@ -33,7 +33,6 @@ Cursor::Cursor(bool team):Controlable("cursor", 1, Position(4*WIDTH + !team*(2*W
   addSound(CURSOR);
   addSound(MOVE_ERR);
   addSound(CHANGE_TURN);
-  
 }
 
 void Cursor::collisionOn(Actor * a)
@@ -209,5 +208,5 @@ void Cursor::loadSprite()
   else
     setColorElement(_elem, WHITE);
     
-  setPlanElement(_elem, Game::GAME_D, 1);
+  setPlanElement(_elem, Game::GAME_D, 0);
 }

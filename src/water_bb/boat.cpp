@@ -38,10 +38,8 @@ Boat::Boat(const std::string name, float life, const Position & p, bool team):Mo
   _team = team;
   _timeFood = 10000;
   _timerFood = 0.f;
-  _lifeBar = NULL;
-  _foodBar = NULL;
-  
-  
+  _lifeBar = nullptr;
+  _foodBar = nullptr;
 }
 
 void Boat::move(float dt)

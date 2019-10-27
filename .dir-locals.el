@@ -2,4 +2,4 @@
 ;;; For more information see (info "(emacs) Directory Variables")
 
 ((nil
-  (cmake-ide-build-dir . "~/Documents/ISIMA/pixel/water_bb/build")))
+  (cmake-ide-build-dir . "~/Documents/water_bb/build")))

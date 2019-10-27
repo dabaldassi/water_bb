@@ -10,10 +10,10 @@ namespace actor {
   class Warboat : public Boat
   {
   protected:
-    Item * _flag;
+    Item *   _flag;
     Weapon * _canon;
-    int    _currentSprite;
-    b2Vec2  _goalCanon;
+    int      _currentSprite;
+    b2Vec2   _goalCanon;
     
   public:
     static constexpr float LIFE = 100.f;

@@ -21,13 +21,28 @@ void collisionRabbit(actor::Actor * actor, actor::Actor * b)
   actor::Item    * rabbit = static_cast<actor::Item *>(actor);
   actor::Warboat * boat = dynamic_cast<actor::Warboat *>(b);
 
-  if(rabbit->isOnTheGround() && boat) {
-    rabbit->pick(boat);
-    rabbit->playSound(0);
-  }
+  const float damage = 20.f;
 
-  std::cout << "rabbit" << "\n";
-  
+  if(rabbit->isOnTheGround()) {
+    if(boat) {
+      rabbit->pick(boat);
+      rabbit->playSound(0);
+    }
+    else {
+      b->kill();
+      rabbit->takeDamage(damage);
+
+      if(rabbit->isDead()) {
+	bool * data;
+	getDataElement(b->elem(), (void **)&data);
+
+	if(*data) actor::Warboat::nb_boat_1 = 0;
+	else      actor::Warboat::nb_boat_2 = 0;
+
+	delete data;
+      }
+    }
+  }
 }
 
 void effectRabbit(actor::Actor * actor)
@@ -140,6 +155,10 @@ void canonEffect(actor::Actor * actor, actor::Actor * b)
   ball->body()->SetMassData(&mass);
   
   ball->loadSprite(Color::black);
+  bool * team = new bool;
+  *team = static_cast<actor::Warboat *>(b)->team();
+  setDataElement(ball->elem(), (void *)team);
+  setFreeDataElement(ball->elem(), NULL);
 }
 
 void generate(Stage * stage)
@@ -169,7 +188,7 @@ void generate(Stage * stage)
   };
 
   actor::Item * rabbit =
-    &stage->create<actor::Item>("rabbit", pos(NB_BLOCK_W>>1, NB_BLOCK_H>>1,85,85),12.f);
+    &stage->create<actor::Item>("rabbit", pos(NB_BLOCK_W>>1, NB_BLOCK_H>>1,85,85),10000.f, 100.f);
   
   rabbit->loadSprite(RABBIT);
   rabbit->addCollisionOnStatement(collisionRabbit);
@@ -225,6 +244,5 @@ int main()
   Game game(1920,1080,"Water Boat Battle");
   
   game.run(generate);
-  
   return 0;
 }

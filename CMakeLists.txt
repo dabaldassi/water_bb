@@ -12,7 +12,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	set(CMAKE_CXX_FLAGS "-std=c++14 -g -Wall -pedantic ${CMAKE_CXX_FLAGS}")
 endif()
 
-include_directories(src src/castor/src)
+include_directories(src src/castor/src src/castor/src/SANDAL2/src)
 add_subdirectory(src/castor)
 
 
