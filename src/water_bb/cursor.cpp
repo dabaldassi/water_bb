@@ -94,7 +94,7 @@ void Cursor::resetFilter()
     _boatColliding = NULL;
 }
 
-void Cursor::move(float dt)
+void Cursor::move(float)
 {
   b2Vec2 pos = _body->GetPosition();
 
@@ -154,7 +154,7 @@ void Cursor::effect()
   _boatColliding->select();
 }
 
-void Cursor::act(float dt)
+void Cursor::act(float)
 {
   if(_boatColliding && _boatColliding->deadboat())
     _boatColliding = NULL;

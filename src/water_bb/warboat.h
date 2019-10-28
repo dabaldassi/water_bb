@@ -26,7 +26,7 @@ namespace actor {
   
     virtual void act(float dt);
     virtual void effect();
-    virtual void effect(Actor * actor){}
+    virtual void effect(Actor *){}
     virtual void loadSprite();
     virtual void collisionOn(Actor * actor);
     virtual void attack(const b2Vec2 & pos);

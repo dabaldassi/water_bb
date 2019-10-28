@@ -54,7 +54,7 @@ void effectRabbit(actor::Actor * actor)
   *static_cast<bool *>(rabbit->stage()->getData()) = rabbit->getPosition<b2Vec2>().x < actor::Warboat::WIDTH;
 }
 
-bool end_menu(float dt)
+bool end_menu(float)
 {
   DataWindow * d;
 
@@ -63,7 +63,7 @@ bool end_menu(float dt)
   return d->param == 1;
 }
 
-void replay(Element * e, int button)
+void replay(Element *, int)
 {
   DataWindow * d;
 
@@ -72,7 +72,7 @@ void replay(Element * e, int button)
   d->param = 2;
 }
 
-void quit(Element * e, int button)
+void quit(Element *, int)
 {
   DataWindow * d;
 

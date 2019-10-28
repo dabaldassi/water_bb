@@ -42,7 +42,7 @@ Boat::Boat(const std::string name, float life, const Position & p, bool team):Mo
   _foodBar = nullptr;
 }
 
-void Boat::move(float dt)
+void Boat::move(float)
 {
   b2Vec2 velocity = _body->GetLinearVelocity();
   b2Vec2 pos = _body->GetPosition();

@@ -3,7 +3,10 @@
 
 /*** MUSIC ***/
 
+#ifndef STR
 #define STR(D,M) #D#M
+#endif
+
 #define BUILD_MUSIC(D,M) STR(D,M)
 #define MK_MUSIC(M) BUILD_MUSIC(MUSIC_DIR,M)
 #define MUSIC_DIR ../assets/musics/

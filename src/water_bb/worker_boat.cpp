@@ -82,7 +82,7 @@ void WorkerBoat::collisionOn(Actor * actor)
   }
 }
 
-void WorkerBoat::collisionOff(Actor * actor)
+void WorkerBoat::collisionOff(Actor * )
 {
 }
 
@@ -91,7 +91,7 @@ void WorkerBoat::effect()
   
 }
 
-void WorkerBoat::effect(Actor * actor)
+void WorkerBoat::effect(Actor * )
 {
   
 }

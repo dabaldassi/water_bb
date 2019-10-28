@@ -23,7 +23,7 @@ Island::Island(const Position & p):Static("island", p)
 }
 
 
-void Island::act(float dt)
+void Island::act(float)
 {
   if(_food <= 2*FOOD/3.f && _food > FOOD/3.f) setImageElement(_elem, ISLAND_2);
   if(_food <= 0) setImageElement(_elem, ISLAND_3);
