@@ -24,6 +24,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
   castor
   )
 
+file(COPY src/castor/font DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 if(INCLUDE_TEST)
 
   file(GLOB_RECURSE testing_sources src/testing/*.cpp)
