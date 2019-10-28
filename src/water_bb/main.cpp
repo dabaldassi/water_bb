@@ -6,6 +6,7 @@
 #include <gameEngine/ihm/button.h>
 #include <gameEngine/ihm/text.h>
 #include <gameEngine/ihm/font.h>
+#include <gameEngine/ihm/menu.h>
 
 #include "cursor.h"
 #include "worker_boat.h"
@@ -241,8 +242,53 @@ void generate(Stage * stage)
 
 int main()
 {
-  Game game(1920,1080,"Water Boat Battle");
+  constexpr int MENU_DISPLAY = 5;
+  constexpr int WIDTH = 1920, HEIGHT = 1080;
+  Game game(WIDTH,HEIGHT,"Water Boat Battle");
+  ihm::Menu<MENU_DISPLAY> startMenu(WIDTH,HEIGHT);
+
+  startMenu.setBackground([](){
+      int sea_color[] = {38,120,155,255};
+      createBlock(0, 0, WIDTH, HEIGHT, sea_color, MENU_DISPLAY, 5);
+      createImage(3 * WIDTH / 4 -  actor::Warboat::WIDTH / 2,
+		  HEIGHT / 3 - actor::Warboat::HEIGHT / 2 ,
+		  actor::Warboat::WIDTH,
+		  actor::Warboat::HEIGHT,
+		  BOAT_WAR_1_SOLO, MENU_DISPLAY, 0);
+      
+      createImage(WIDTH / 4 - actor::Warboat::WIDTH / 2,
+		  HEIGHT / 3 - actor::Warboat::HEIGHT / 2,
+		  actor::Warboat::WIDTH,
+		  actor::Warboat::HEIGHT,
+		  BOAT_WAR_2_SOLO, MENU_DISPLAY, 0);
+
+      createImage(WIDTH / 2 - actor::Island::WIDTH / 2,
+		  HEIGHT - actor::Island::HEIGHT - 150,
+		  actor::Island::WIDTH,
+		  actor::Island::HEIGHT,
+		  ISLAND_1, MENU_DISPLAY, 0);
+    });
   
-  game.run(generate);
+  startMenu.setTextColor(Color::white,Color::red);
+  startMenu.setTitle("Water Boat Battle");
+  startMenu.addItem("Jouer", [&game](){
+      game.run(generate);
+      return false; // Exit menu
+    });
+  startMenu.addItem("Tutoriel", [](){ return true; });
+  startMenu.addItem("Cinematique", [](){
+      Mix_Music * story = Mix_LoadMUS(STORY);
+
+      if(story) {
+	Mix_PlayMusic(story, 1);
+      }
+      else std::cerr << "Can't load story\n";
+      
+      return true;
+    });
+  startMenu.addItem("Quitter", []() { return false; } );
+
+  startMenu.run();
+
   return 0;
 }

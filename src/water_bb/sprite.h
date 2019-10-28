@@ -9,4 +9,7 @@
 #define ISLAND_3 "../assets/sprites/ile_vide.png"
 #define RABBIT "../assets/sprites/lapin.png"
 
+#define BOAT_WAR_1_SOLO  "../assets/sprites/bateau1.png"
+#define BOAT_WAR_2_SOLO  "../assets/sprites/bateau2.png"
+
 #endif /* SPRITE_H */

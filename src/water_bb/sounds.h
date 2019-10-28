@@ -8,10 +8,8 @@
 #define MK_MUSIC(M) BUILD_MUSIC(MUSIC_DIR,M)
 #define MUSIC_DIR ../assets/musics/
 
-
 #define MUSIC_MAIN_PHASE MK_MUSIC(music_main_phase.wav)
 #define STORY MK_MUSIC(story2.wav)
-
 
 /*** SOUND ***/
 
